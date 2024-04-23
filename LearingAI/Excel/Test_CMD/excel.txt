@@ -1,0 +1,4 @@
+Số lượng file python trong thư mục: 3
+CIT_CMD_0010
+CIT_CMD_0020
+CIT_CMD_0030
