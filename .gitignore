@@ -1,0 +1,4 @@
+venv/
+Ollama/venv/
+__pycache__/
+*.pyc
