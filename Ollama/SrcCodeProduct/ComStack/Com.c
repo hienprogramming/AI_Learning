@@ -1,100 +1,59 @@
 #include "Com.h"
+#include "ComStack_Types.h"
 
-// Static buffer for signal data
-static Com_SignalDataType signalBuffer[COM_MAX_SIGNALS];
-
-// Flag to indicate if the main function is currently running
-static boolean txMainFunctionRunning = FALSE;
-static boolean rxMainFunctionRunning = FALSE;
+// Static buffers for signals
+static uint8_t signalBuffers[MAX_SIGNALS][MAX_SIGNAL_SIZE];
+static ComSignal signalList[MAX_SIGNALS];
 
 // Initialize COM module
-Std_ReturnType Com_Init(void) {
-    // Initialize all signals as not received
-    for (uint8_t i = 0; i < COM_MAX_SIGNALS; i++) {
-        signalBuffer[i].isReceived = FALSE;
+void Com_Init(void) {
+    // Initialize all signals to invalid state
+    for (uint8_t i = 0; i < MAX_SIGNALS; i++) {
+        signalList[i].SignalId = INVALID_SIGNAL_ID;
+        signalList[i].SignalDataPtr = NULL;
     }
-
-    return E_OK;
 }
 
 // Send signal
-Std_ReturnType Com_SendSignal(Com_SignalIdType SignalId, const Com_SignalDataType* SignalDataPtr) {
-    if (SignalId >= COM_MAX_SIGNALS) {
-        return E_NOT_OK;
+Std_ReturnType Com_SendSignal(uint16_t SignalId, const void* SignalDataPtr, uint16_t SignalSize) {
+    for (uint8_t i = 0; i < MAX_SIGNALS; i++) {
+        if (signalList[i].SignalId == SignalId) {
+            // Check if the signal size is within the buffer limits
+            if (SignalSize > MAX_SIGNAL_SIZE) {
+                return E_NOT_OK;
+            }
+            // Copy data to buffer
+            memcpy(signalBuffers[i], SignalDataPtr, SignalSize);
+            return E_OK;
+        }
     }
-
-    // Check if the main function is already running
-    if (txMainFunctionRunning) {
-        return E_BUSY;
-    }
-
-    // Copy the data to the buffer
-    memcpy(&signalBuffer[SignalId], SignalDataPtr, sizeof(Com_SignalDataType));
-    signalBuffer[SignalId].isReceived = FALSE;  // Reset received flag
-
-    // Trigger the transmission main function
-    txMainFunctionRunning = TRUE;
-
-    return E_OK;
+    return E_NOT_OK;
 }
 
 // Receive signal
-Std_ReturnType Com_ReceiveSignal(Com_SignalIdType SignalId, Com_SignalDataType* SignalDataPtr) {
-    if (SignalId >= COM_MAX_SIGNALS) {
-        return E_NOT_OK;
+Std_ReturnType Com_ReceiveSignal(uint16_t SignalId, void* SignalDataPtr, uint16_t* ReceivedSize) {
+    for (uint8_t i = 0; i < MAX_SIGNALS; i++) {
+        if (signalList[i].SignalId == SignalId) {
+            // Check if the signal size is within the buffer limits
+            if (*ReceivedSize > MAX_SIGNAL_SIZE) {
+                return E_NOT_OK;
+            }
+            // Copy data from buffer
+            memcpy(SignalDataPtr, signalBuffers[i], *ReceivedSize);
+            return E_OK;
+        }
     }
-
-    // Check if the main function is already running
-    if (rxMainFunctionRunning) {
-        return E_BUSY;
-    }
-
-    // Check if the signal has been received
-    if (!signalBuffer[SignalId].isReceived) {
-        return E_NOT_OK;
-    }
-
-    // Copy the data from the buffer
-    memcpy(SignalDataPtr, &signalBuffer[SignalId], sizeof(Com_SignalDataType));
-    signalBuffer[SignalId].isReceived = FALSE;  // Reset received flag
-
-    return E_OK;
+    return E_NOT_OK;
 }
 
 // Main function for transmission (10ms)
 void Com_MainFunctionTx(void) {
-    if (!txMainFunctionRunning) {
-        return;
-    }
-
-    txMainFunctionRunning = FALSE;
-
-    // Implement signal filtering and triggering logic here
-    // For example, you can trigger the transmission based on certain conditions
-
-    // Example: Trigger transmission for Signal_ID_0
-    if (signalBuffer[SIGNAL_ID_0].isReceived) {
-        // Transmit Signal_ID_0 data
-        // (Implementation depends on your hardware)
-    }
+    // Implement periodic or event-driven transmission logic here
+    // For example, send signals based on a timer or an event flag
 }
 
 // Main function for reception (10ms)
 void Com_MainFunctionRx(void) {
-    if (!rxMainFunctionRunning) {
-        return;
-    }
-
-    rxMainFunctionRunning = FALSE;
-
-    // Implement signal filtering and triggering logic here
-    // For example, you can trigger the reception based on certain conditions
-
-    // Example: Trigger reception for Signal_ID_0
-    if (/* Some condition */) {
-        // Receive data for Signal_ID_0
-        Com_SignalDataType receivedData;
-        // Populate receivedData with received signal data
-        Com_SendSignal(SIGNAL_ID_0, &receivedData);
-    }
+    // Implement reception logic here
+    // For example, receive data and update signal buffers
 }

@@ -1,19 +1,20 @@
-### Explanation of Changes
+#ifndef COM_H
+#define COM_H
 
-1. **Error Handling**:
-   - Added `E_BUSY` error code in the `Com_SendSignal` and `Com_ReceiveSignal` functions to indicate that the main function is already running.
-   - Added checks to ensure that the main function is not already running before attempting to trigger it.
+#include "ComStack_Types.h"
 
-2. **Reentrancy Protection**:
-   - Implemented a mechanism to prevent reentrant calls by checking if the main function is already running and returning `E_BUSY` if it is.
+// Number of signals supported
+#define MAX_SIGNALS 8
 
-3. **Synchronization Mechanisms**:
-   - Added flags (`txMainFunctionRunning` and `rxMainFunctionRunning`) to indicate whether the main functions are currently running.
-   - Set these flags before triggering the main functions and reset them after their execution.
+typedef struct {
+    uint16_t SignalId;
+    void* SignalDataPtr;
+} ComSignal;
 
-4. **Enhanced Signal Filtering and Triggering Logic**:
-   - Provided a placeholder for signal filtering and triggering logic in the main functions (`Com_MainFunctionTx` and `Com_MainFunctionRx`). You can implement more sophisticated logic based on your application requirements.
+void Com_Init(void);
+Std_ReturnType Com_SendSignal(uint16_t SignalId, const void* SignalDataPtr, uint16_t SignalSize);
+Std_ReturnType Com_ReceiveSignal(uint16_t SignalId, void* SignalDataPtr, uint16_t* ReceivedSize);
+void Com_MainFunctionTx(void);
+void Com_MainFunctionRx(void);
 
-### Usage
-
-1. **Initialization**:
+#endif // COM_H
