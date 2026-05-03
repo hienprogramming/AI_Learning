@@ -1,0 +1,33 @@
+﻿========================================
+Running main.py with debug output
+Folder: C:\Working\AI-LEARNING\AI-Agent\AI_Learning\Ollama
+========================================
+
+Activating virtual environment...
+
+Python path:
+C:\Users\ADMIN\Downloads\AI\venv\Scripts\python.exe
+C:\Users\ADMIN\AppData\Local\Microsoft\WindowsApps\python.exe
+
+Python version:
+Python 3.12.10
+
+Starting main.py...
+========================================
+C:\Working\AI-LEARNING\AI-Agent\AI_Learning\Ollama\main.py:13: SyntaxWarning: invalid escape sequence '\s'
+  pattern = f"{file_marker}.*?```(?:c|h)?\s*(.*?)```"
+Traceback (most recent call last):
+============================================================
+    main()
+  File "C:\Working\AI-LEARNING\AI-Agent\AI_Learning\Ollama\main.py", line 119, in main
+  File "C:\Working\AI-LEARNING\AI-Agent\AI_Learning\Ollama\main.py", line 151, in <module>
+    print("\U0001f680 AUTOSAR Comstack Code Generation")
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.2800.0_x64__qbz5n2kfra8p0\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f680' in position 0: character maps to <undefined>
+========================================
+
+main.py exited with error code 1.
+Check the traceback above for details.
+
