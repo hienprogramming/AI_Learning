@@ -1,9 +1,7 @@
 from pathlib import Path
 import re
-
-import dev_agent
-import fixer_agent
-import tester_agent
+import subprocess
+import sys
 
 
 def extract_code(response: str, file_marker: str = None) -> str:
@@ -31,7 +29,55 @@ def save_file(output_dir: Path, filename: str, content: str):
     return output_file
 
 
+def log_agent(agent_name: str, module_name: str, message: str):
+    print(f"         [{agent_name}] {message}: {module_name}", flush=True)
+
+
+def print_agent_plan(modules, agents):
+    print("\n" + "=" * 60, flush=True)
+    print("[*] Agent/module pre-check plan", flush=True)
+    print("=" * 60, flush=True)
+    print("[AGENTS]", flush=True)
+    for role, agent_name in agents.items():
+        print(f"        {role:<6}: {agent_name}", flush=True)
+    print("", flush=True)
+
+    for module_info in modules:
+        module_name = module_info["name"]
+        files = ", ".join(module_info["files"])
+        print(f"[CHECK] {module_name} -> {files}", flush=True)
+        print(f"        dev    -> {agents['dev']}    : generate code", flush=True)
+        print(f"        test   -> {agents['test']}   : review generated code", flush=True)
+        print(f"        fix    -> {agents['fix']}    : fix issues from tester feedback", flush=True)
+
+
 def main():
+    # Run environment check first
+    print("[*] Running environment check...\n", flush=True)
+    result = subprocess.run([sys.executable, "check_environment.py"])
+    if result.returncode != 0:
+        print("\n[ERROR] Environment is not ready. Fix the warnings above, then run again.\n")
+        return result.returncode
+
+    import dev_agent
+    import fixer_agent
+    import tester_agent
+
+    dev_provider = getattr(dev_agent, "DEV_AGENT_PROVIDER", "gemini")
+    if dev_provider == "ollama":
+        dev_label = f"dev_agent / Ollama:{dev_agent.OLLAMA_FALLBACK_MODEL}"
+    else:
+        dev_label = (
+            f"dev_agent / Gemini:{dev_agent.GEMINI_MODEL} "
+            f"(fallback Ollama:{dev_agent.OLLAMA_FALLBACK_MODEL})"
+        )
+
+    agents = {
+        "dev": dev_label,
+        "test": f"tester_agent / Ollama:{tester_agent.MODEL}",
+        "fix": f"fixer_agent / Ollama:{fixer_agent.MODEL}",
+    }
+
     output_dir = Path("SrcCodeProduct")
     output_dir.mkdir(exist_ok=True)
 
@@ -118,6 +164,7 @@ No implementation, only type definitions and macros."""
     print("=" * 60)
     print("[*] AUTOSAR Comstack Code Generation")
     print("=" * 60)
+    print_agent_plan(modules, agents)
 
     for module_info in modules:
         print(f"\n[MODULE] Generating: {module_info['name']}")
@@ -125,16 +172,22 @@ No implementation, only type definitions and macros."""
         print(f"         Desc: {module_info['desc']}")
         
         # Generate code for this module
+        log_agent("dev_agent", module_info["name"], "Loading module")
         code = dev_agent.run(module_info['req'])
-        print("         [OK] Code generated")
+        log_agent("dev_agent", module_info["name"], "Finished module")
+        print("         [OK] Code generated", flush=True)
 
         # Test the generated code
+        log_agent("tester_agent", module_info["name"], "Loading module")
         feedback = tester_agent.run(code)
-        print("         [OK] Testing completed")
+        log_agent("tester_agent", module_info["name"], "Finished module")
+        print("         [OK] Testing completed", flush=True)
 
         # Fix any issues
+        log_agent("fixer_agent", module_info["name"], "Loading module")
         fixed = fixer_agent.run(code, feedback)
-        print("         [OK] Fixes applied")
+        log_agent("fixer_agent", module_info["name"], "Finished module")
+        print("         [OK] Fixes applied", flush=True)
 
         # Save generated files
         print("         Saving files:")
@@ -148,4 +201,4 @@ No implementation, only type definitions and macros."""
     print("=" * 60)
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main() or 0)

@@ -1,6 +1,6 @@
 import ollama
 
-MODEL = "llama3"   # <-- DIFFERENT MODEL
+MODEL = "llama3"
 
 def run(code: str) -> str:
     return ollama.chat(
