@@ -2,6 +2,69 @@ from pathlib import Path
 import re
 import subprocess
 import sys
+import logging
+from datetime import datetime
+
+
+def setup_logging():
+    """Setup logging to both console and file"""
+    logs_dir = Path("Logs")
+    logs_dir.mkdir(exist_ok=True)
+    
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    log_file = logs_dir / f"run_main_{timestamp}.txt"
+    
+    # Create logger
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    
+    # File handler
+    file_handler = logging.FileHandler(log_file, encoding="utf-8")
+    file_handler.setLevel(logging.DEBUG)
+    
+    # Console handler
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setLevel(logging.DEBUG)
+    
+    # Formatter
+    formatter = logging.Formatter("%(message)s")
+    file_handler.setFormatter(formatter)
+    console_handler.setFormatter(formatter)
+    
+    # Add handlers
+    logger.addHandler(file_handler)
+    logger.addHandler(console_handler)
+    
+    return log_file
+
+
+class OutputCapture:
+    """Capture print output to both console and file"""
+    def __init__(self, log_file):
+        self.log_file = log_file
+        self.file = None
+        self.original_stdout = sys.stdout
+        
+    def __enter__(self):
+        self.file = open(self.log_file, "w", encoding="utf-8")
+        return self
+    
+    def __exit__(self, *args):
+        if self.file:
+            self.file.close()
+    
+    def write(self, text):
+        self.original_stdout.write(text)
+        if self.file:
+            self.file.write(text)
+        self.original_stdout.flush()
+        if self.file:
+            self.file.flush()
+    
+    def flush(self):
+        self.original_stdout.flush()
+        if self.file:
+            self.file.flush()
 
 
 def extract_code(response: str, file_marker: str = None) -> str:
@@ -51,34 +114,9 @@ def print_agent_plan(modules, agents):
         print(f"        fix    -> {agents['fix']}    : fix issues from tester feedback", flush=True)
 
 
-def main():
-    # Run environment check first
-    print("[*] Running environment check...\n", flush=True)
-    result = subprocess.run([sys.executable, "check_environment.py"])
-    if result.returncode != 0:
-        print("\n[ERROR] Environment is not ready. Fix the warnings above, then run again.\n")
-        return result.returncode
-
-    import dev_agent
-    import fixer_agent
-    import tester_agent
-
-    dev_provider = getattr(dev_agent, "DEV_AGENT_PROVIDER", "gemini")
-    if dev_provider == "ollama":
-        dev_label = f"dev_agent / Ollama:{dev_agent.OLLAMA_FALLBACK_MODEL}"
-    else:
-        dev_label = (
-            f"dev_agent / Gemini:{dev_agent.GEMINI_MODEL} "
-            f"(fallback Ollama:{dev_agent.OLLAMA_FALLBACK_MODEL})"
-        )
-
-    agents = {
-        "dev": dev_label,
-        "test": f"tester_agent / Ollama:{tester_agent.MODEL}",
-        "fix": f"fixer_agent / Ollama:{fixer_agent.MODEL}",
-    }
-
-    output_dir = Path("BootLoader")
+def setup_bootloader_modules():
+    """Initialize bootloader project configuration and module definitions"""
+    output_dir = Path("SrcCodeProduct") / "BootLoader"
     output_dir.mkdir(exist_ok=True)
 
     project_context = (
@@ -158,8 +196,103 @@ def main():
         },
     ]
 
-    print("=" * 60)
-    print("[*] Bootloader Code Generation")
+    return output_dir, project_context, modules
+
+
+def setup_app_modules():
+    """Initialize app digital key project configuration and module definitions"""
+    output_dir = Path("SrcCodeProduct") / "App"
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    project_context = (
+        "I am coding for an embedded STM32F103C8T6 microcontroller. "
+        "I need to create a digital key application that integrates with Bootloader and ComStack. "
+        "Application starts at 0x08008000. Leverage existing Boot_Safety, Boot_Jump, Com, and CanIf modules.\n\n"
+    )
+
+    # Define app modules to generate
+    modules = [
+        {
+            "name": "Key Storage",
+            "files": ["App_Key_Storage.h", "App_Key_Storage.c"],
+            "desc": "Digital key storage with metadata and validation support",
+            "req": """Create digital key storage module for STM32F103C8T6 app:
+- App_Key_Init(): initialize key storage system
+- App_Key_Store(key_id, key_data, key_size): store key in secure area
+- App_Key_Retrieve(key_id, key_data, key_size): retrieve stored key
+- App_Key_Exists(key_id): check if key exists
+- Use Boot_Safety functions for CRC verification
+- Static buffers only, no malloc
+- Provide App_Key_Storage.h and App_Key_Storage.c""",
+        },
+        {
+            "name": "Key Manager",
+            "files": ["App_Key_Manager.h", "App_Key_Manager.c"],
+            "desc": "Key lifecycle management, validation, and expiration",
+            "req": """Create key manager module for digital key application:
+- App_KeyManager_Init(): initialize key manager
+- App_KeyManager_ValidateKey(key_id): validate key integrity and expiration
+- App_KeyManager_IsKeyValid(key_id): check if key is valid
+- App_KeyManager_GetKeyInfo(key_id, info): retrieve key metadata
+- Support key versioning and rollback protection
+- Use Boot_Safety for verification
+- Static allocation only
+- Provide App_Key_Manager.h and App_Key_Manager.c""",
+        },
+        {
+            "name": "Security Handler",
+            "files": ["App_Security.h", "App_Security.c"],
+            "desc": "Cryptographic operations and security primitives",
+            "req": """Create security handler module:
+- App_Security_Init(): initialize security subsystem
+- App_Security_HashData(data, length, hash): compute hash (use CRC32 or similar)
+- App_Security_VerifySignature(data, signature): verify digital signature
+- App_Security_EncryptKey(key, encrypted): basic encryption wrapper
+- App_Security_DecryptKey(encrypted, key): basic decryption wrapper
+- Do not use malloc
+- Provide App_Security.h and App_Security.c""",
+        },
+        {
+            "name": "ComStack Interface",
+            "files": ["App_ComInterface.h", "App_ComInterface.c"],
+            "desc": "Communication interface using ComStack (Com, CanIf, CanTp)",
+            "req": """Create communication interface module:
+- App_ComInterface_Init(): initialize communication layer
+- App_ComInterface_SendKeyRequest(request): send key request via CAN
+- App_ComInterface_ReceiveKeyData(buffer, length): receive key data
+- App_ComInterface_HandleMessage(msg): process incoming CAN messages
+- Integrate with Com module for message handling
+- Use CanIf for CAN frame transmission
+- Static buffers, no malloc
+- Provide App_ComInterface.h and App_ComInterface.c""",
+        },
+        {
+            "name": "App Main",
+            "files": ["App_Main.h", "App_Main.c"],
+            "desc": "Application entry point and main control loop",
+            "req": """Create app main module:
+- App_Init(): initialize all app subsystems (Key Manager, Security, ComInterface)
+- App_Run(): main application loop
+- App_ProcessCommands(): handle incoming commands
+- App_HandleError(error_code): error handling and recovery
+- Validate app integrity using Boot_Safety
+- Check application validity using Boot_Jump functions
+- Static allocation only
+- Provide App_Main.h and App_Main.c""",
+        },
+    ]
+
+    return output_dir, project_context, modules
+
+
+def generate_modules(project_name: str, output_dir: Path, project_context: str, modules: list, agents: dict):
+    """Generate code for all modules in a project"""
+    import dev_agent
+    import fixer_agent
+    import tester_agent
+
+    print("\n" + "=" * 60)
+    print(f"[*] {project_name} Code Generation")
     print("=" * 60)
     print_agent_plan(modules, agents)
 
@@ -193,9 +326,61 @@ def main():
             save_file(output_dir, filename, content)
 
     print("\n" + "=" * 60)
-    print("[SUCCESS] Bootloader generation complete!")
+    print(f"[SUCCESS] {project_name} generation complete!")
     print(f"[OUTPUT] All files saved to: {output_dir.absolute()}")
     print("=" * 60)
+
+
+def main():
+    # Setup logging
+    logs_dir = Path("Logs")
+    logs_dir.mkdir(exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    log_file = logs_dir / f"run_main_{timestamp}.txt"
+    
+    # Redirect stdout to capture both console and file
+    with OutputCapture(log_file) as output:
+        sys.stdout = output
+        try:
+            # Run environment check first
+            print("[*] Running environment check...\n", flush=True)
+            result = subprocess.run([sys.executable, "check_environment.py"])
+            if result.returncode != 0:
+                print("\n[ERROR] Environment is not ready. Fix the warnings above, then run again.\n")
+                return result.returncode
+
+            import dev_agent
+            import fixer_agent
+            import tester_agent
+
+            dev_provider = getattr(dev_agent, "DEV_AGENT_PROVIDER", "gemini")
+            if dev_provider == "ollama":
+                dev_label = f"dev_agent / Ollama:{dev_agent.OLLAMA_FALLBACK_MODEL}"
+            else:
+                dev_label = (
+                    f"dev_agent / Gemini:{dev_agent.GEMINI_MODEL} "
+                    f"(fallback Ollama:{dev_agent.OLLAMA_FALLBACK_MODEL})"
+                )
+
+            agents = {
+                "dev": dev_label,
+                "test": f"tester_agent / Ollama:{tester_agent.MODEL}",
+                "fix": f"fixer_agent / Ollama:{fixer_agent.MODEL}",
+            }
+
+            # Generate Bootloader
+            output_dir, project_context, modules = setup_bootloader_modules()
+            generate_modules("Bootloader", output_dir, project_context, modules, agents)
+
+            # Generate App (Digital Key)
+            output_dir, project_context, modules = setup_app_modules()
+            generate_modules("App (Digital Key)", output_dir, project_context, modules, agents)
+
+            print("\n" + "=" * 60)
+            print("[SUCCESS] All projects generation complete!")
+            print("=" * 60)
+        finally:
+            sys.stdout = output.original_stdout
 
 if __name__ == "__main__":
     sys.exit(main() or 0)

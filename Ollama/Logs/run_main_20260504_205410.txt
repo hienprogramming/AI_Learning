@@ -1,0 +1,242 @@
+[*] Running environment check...
+
+
+============================================================
+[*] Bootloader Code Generation
+============================================================
+
+============================================================
+[*] Agent/module pre-check plan
+============================================================
+[AGENTS]
+        dev   : dev_agent / Ollama:qwen2.5-coder:latest
+        test  : tester_agent / Ollama:llama3
+        fix   : fixer_agent / Ollama:qwen2.5-coder
+
+[CHECK] MCU Base -> Boot_Mcu.h, Boot_Mcu.c
+        dev    -> dev_agent / Ollama:qwen2.5-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+[CHECK] Boot Jump -> Boot_Jump.h, Boot_Jump.c
+        dev    -> dev_agent / Ollama:qwen2.5-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+[CHECK] Firmware Update -> Boot_Update.h, Boot_Update.c
+        dev    -> dev_agent / Ollama:qwen2.5-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+[CHECK] Boot Protocol -> Boot_Protocol.h, Boot_Protocol.c
+        dev    -> dev_agent / Ollama:qwen2.5-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+[CHECK] Boot Safety -> Boot_Safety.h, Boot_Safety.c
+        dev    -> dev_agent / Ollama:qwen2.5-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+
+[MODULE] Generating: MCU Base
+         Files: Boot_Mcu.h, Boot_Mcu.c
+         Desc: Startup support, interrupt control, and flash memory primitives
+         [dev_agent] Loading module: MCU Base
+         [dev_agent] Finished module: MCU Base
+         [OK] Code generated
+         [tester_agent] Loading module: MCU Base
+         [tester_agent] Finished module: MCU Base
+         [OK] Testing completed
+         [fixer_agent] Loading module: MCU Base
+         [fixer_agent] Finished module: MCU Base
+         [OK] Fixes applied
+         Saving files:
+      [OK] Boot_Mcu.h
+      [OK] Boot_Mcu.c
+
+[MODULE] Generating: Boot Jump
+         Files: Boot_Jump.h, Boot_Jump.c
+         Desc: Bootloader/application memory layout and jump-to-application logic
+         [dev_agent] Loading module: Boot Jump
+         [dev_agent] Finished module: Boot Jump
+         [OK] Code generated
+         [tester_agent] Loading module: Boot Jump
+         [tester_agent] Finished module: Boot Jump
+         [OK] Testing completed
+         [fixer_agent] Loading module: Boot Jump
+         [fixer_agent] Finished module: Boot Jump
+         [OK] Fixes applied
+         Saving files:
+      [OK] Boot_Jump.h
+      [OK] Boot_Jump.c
+
+[MODULE] Generating: Firmware Update
+         Files: Boot_Update.h, Boot_Update.c
+         Desc: Firmware update flow over UART with erase, write, verify, and jump commands
+         [dev_agent] Loading module: Firmware Update
+         [dev_agent] Finished module: Firmware Update
+         [OK] Code generated
+         [tester_agent] Loading module: Firmware Update
+         [tester_agent] Finished module: Firmware Update
+         [OK] Testing completed
+         [fixer_agent] Loading module: Firmware Update
+         [fixer_agent] Finished module: Firmware Update
+         [OK] Fixes applied
+         Saving files:
+      [OK] Boot_Update.h
+      [OK] Boot_Update.c
+
+[MODULE] Generating: Boot Protocol
+         Files: Boot_Protocol.h, Boot_Protocol.c
+         Desc: Packet protocol definitions and parser for bootloader commands
+         [dev_agent] Loading module: Boot Protocol
+         [dev_agent] Finished module: Boot Protocol
+         [OK] Code generated
+         [tester_agent] Loading module: Boot Protocol
+         [tester_agent] Finished module: Boot Protocol
+         [OK] Testing completed
+         [fixer_agent] Loading module: Boot Protocol
+         [fixer_agent] Finished module: Boot Protocol
+         [OK] Fixes applied
+         Saving files:
+      [OK] Boot_Protocol.h
+      [OK] Boot_Protocol.c
+
+[MODULE] Generating: Boot Safety
+         Files: Boot_Safety.h, Boot_Safety.c
+         Desc: CRC check, image validation, rollback hooks, and dual-bank metadata
+         [dev_agent] Loading module: Boot Safety
+         [dev_agent] Finished module: Boot Safety
+         [OK] Code generated
+         [tester_agent] Loading module: Boot Safety
+         [tester_agent] Finished module: Boot Safety
+         [OK] Testing completed
+         [fixer_agent] Loading module: Boot Safety
+         [fixer_agent] Finished module: Boot Safety
+         [OK] Fixes applied
+         Saving files:
+      [OK] Boot_Safety.h
+      [OK] Boot_Safety.c
+
+============================================================
+[SUCCESS] Bootloader generation complete!
+[OUTPUT] All files saved to: C:\Working\AI-LEARNING\AI-Agent\AI_Learning\Ollama\SrcCodeProduct\BootLoader
+============================================================
+
+============================================================
+[*] App (Digital Key) Code Generation
+============================================================
+
+============================================================
+[*] Agent/module pre-check plan
+============================================================
+[AGENTS]
+        dev   : dev_agent / Ollama:qwen2.5-coder:latest
+        test  : tester_agent / Ollama:llama3
+        fix   : fixer_agent / Ollama:qwen2.5-coder
+
+[CHECK] Key Storage -> App_Key_Storage.h, App_Key_Storage.c
+        dev    -> dev_agent / Ollama:qwen2.5-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+[CHECK] Key Manager -> App_Key_Manager.h, App_Key_Manager.c
+        dev    -> dev_agent / Ollama:qwen2.5-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+[CHECK] Security Handler -> App_Security.h, App_Security.c
+        dev    -> dev_agent / Ollama:qwen2.5-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+[CHECK] ComStack Interface -> App_ComInterface.h, App_ComInterface.c
+        dev    -> dev_agent / Ollama:qwen2.5-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+[CHECK] App Main -> App_Main.h, App_Main.c
+        dev    -> dev_agent / Ollama:qwen2.5-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+
+[MODULE] Generating: Key Storage
+         Files: App_Key_Storage.h, App_Key_Storage.c
+         Desc: Digital key storage with metadata and validation support
+         [dev_agent] Loading module: Key Storage
+         [dev_agent] Finished module: Key Storage
+         [OK] Code generated
+         [tester_agent] Loading module: Key Storage
+         [tester_agent] Finished module: Key Storage
+         [OK] Testing completed
+         [fixer_agent] Loading module: Key Storage
+         [fixer_agent] Finished module: Key Storage
+         [OK] Fixes applied
+         Saving files:
+      [OK] App_Key_Storage.h
+      [OK] App_Key_Storage.c
+
+[MODULE] Generating: Key Manager
+         Files: App_Key_Manager.h, App_Key_Manager.c
+         Desc: Key lifecycle management, validation, and expiration
+         [dev_agent] Loading module: Key Manager
+         [dev_agent] Finished module: Key Manager
+         [OK] Code generated
+         [tester_agent] Loading module: Key Manager
+         [tester_agent] Finished module: Key Manager
+         [OK] Testing completed
+         [fixer_agent] Loading module: Key Manager
+         [fixer_agent] Finished module: Key Manager
+         [OK] Fixes applied
+         Saving files:
+      [OK] App_Key_Manager.h
+      [OK] App_Key_Manager.c
+
+[MODULE] Generating: Security Handler
+         Files: App_Security.h, App_Security.c
+         Desc: Cryptographic operations and security primitives
+         [dev_agent] Loading module: Security Handler
+         [dev_agent] Finished module: Security Handler
+         [OK] Code generated
+         [tester_agent] Loading module: Security Handler
+         [tester_agent] Finished module: Security Handler
+         [OK] Testing completed
+         [fixer_agent] Loading module: Security Handler
+         [fixer_agent] Finished module: Security Handler
+         [OK] Fixes applied
+         Saving files:
+      [OK] App_Security.h
+      [OK] App_Security.c
+
+[MODULE] Generating: ComStack Interface
+         Files: App_ComInterface.h, App_ComInterface.c
+         Desc: Communication interface using ComStack (Com, CanIf, CanTp)
+         [dev_agent] Loading module: ComStack Interface
+         [dev_agent] Finished module: ComStack Interface
+         [OK] Code generated
+         [tester_agent] Loading module: ComStack Interface
+         [tester_agent] Finished module: ComStack Interface
+         [OK] Testing completed
+         [fixer_agent] Loading module: ComStack Interface
+         [fixer_agent] Finished module: ComStack Interface
+         [OK] Fixes applied
+         Saving files:
+      [OK] App_ComInterface.h
+      [OK] App_ComInterface.c
+
+[MODULE] Generating: App Main
+         Files: App_Main.h, App_Main.c
+         Desc: Application entry point and main control loop
+         [dev_agent] Loading module: App Main
+         [dev_agent] Finished module: App Main
+         [OK] Code generated
+         [tester_agent] Loading module: App Main
+         [tester_agent] Finished module: App Main
+         [OK] Testing completed
+         [fixer_agent] Loading module: App Main
+         [fixer_agent] Finished module: App Main
+         [OK] Fixes applied
+         Saving files:
+      [OK] App_Main.h
+      [OK] App_Main.c
+
+============================================================
+[SUCCESS] App (Digital Key) generation complete!
+[OUTPUT] All files saved to: C:\Working\AI-LEARNING\AI-Agent\AI_Learning\Ollama\SrcCodeProduct\App
+============================================================
+
+============================================================
+[SUCCESS] All projects generation complete!
+============================================================

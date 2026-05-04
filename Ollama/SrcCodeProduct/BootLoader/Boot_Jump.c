@@ -1,43 +1,40 @@
 #include "Boot_Jump.h"
+#include "stm32f10x.h"
 
-#define APPLICATION_ADDRESS 0x08008000
+#define APPLICATION_START_ADDRESS 0x08008000
 
-/**
- * @brief Validate if the application at 0x08008000 is valid.
- *
- * This function checks if the stack pointer and reset vector of the application are set correctly.
- *
- * @return uint8_t 1 if the application is valid, 0 otherwise.
- */
-uint8_t Boot_IsApplicationValid(void)
-{
-    // Get the address of the reset handler from the application
-    void (*app_reset_handler)(void) = (void (*)(void))*(volatile unsigned int *)(APPLICATION_ADDRESS + 4);
+// Function to validate the application
+void Boot_IsApplicationValid(void) {
+    uint32_t *appStackPointer = (uint32_t *)APPLICATION_START_ADDRESS;
+    uint32_t *appResetVector = (uint32_t *)(APPLICATION_START_ADDRESS + 4);
 
-    // Check if the reset vector and stack pointer are valid
-    return (app_reset_handler != NULL);
+    // Check if stack pointer and reset vector are valid
+    if ((appStackPointer != NULL) && (appResetVector != NULL)) {
+        __IO uint32_t spValue = appStackPointer[0]; // MSP value
+        __IO uint32_t pcValue = appResetVector[1]; // Reset handler address
+
+        // Check if the reset vector is a valid function pointer
+        if ((pcValue >= APPLICATION_START_ADDRESS) && (pcValue < 0x10000000)) {
+            // Valid application
+        } else {
+            // Invalid application, stay in bootloader
+        }
+    } else {
+        // Invalid application, stay in bootloader
+    }
 }
 
-/**
- * @brief Jump to the application at 0x08008000.
- *
- * This function disables interrupts, sets the Main Stack Pointer (MSP), and jumps
- * to the application's reset handler.
- */
-void Boot_JumpToApplication(void)
-{
-    // Get the address of the stack pointer from the application
-    unsigned int app_stack_pointer = *(volatile unsigned int *)(APPLICATION_ADDRESS);
+// Function to jump to the application
+void Boot_JumpToApplication(void) {
+    uint32_t *appResetVector = (uint32_t *)(APPLICATION_START_ADDRESS + 4);
+    __IO uint32_t pcValue = appResetVector[1]; // Reset handler address
 
-    // Disable interrupts
+    // Disable all interrupts
     __disable_irq();
 
-    // Set the Main Stack Pointer (MSP) to the application's stack pointer
-    __set_MSP(app_stack_pointer);
+    // Set the MSP stack pointer to the application's stack pointer
+    __set_MSP(appResetVector[0]);
 
-    // Get the address of the reset handler from the application
-    void (*app_reset_handler)(void) = (void (*)(void))*(volatile unsigned int *)(APPLICATION_ADDRESS + 4);
-
-    // Jump to the application's reset handler
-    app_reset_handler();
+    // Jump to the application reset handler
+    ((void (*)(void))pcValue)();
 }

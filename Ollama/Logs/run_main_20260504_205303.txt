@@ -1,0 +1,40 @@
+[*] Running environment check...
+
+
+============================================================
+[*] Bootloader Code Generation
+============================================================
+
+============================================================
+[*] Agent/module pre-check plan
+============================================================
+[AGENTS]
+        dev   : dev_agent / Ollama:qwen3-coder:latest
+        test  : tester_agent / Ollama:llama3
+        fix   : fixer_agent / Ollama:qwen2.5-coder
+
+[CHECK] MCU Base -> Boot_Mcu.h, Boot_Mcu.c
+        dev    -> dev_agent / Ollama:qwen3-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+[CHECK] Boot Jump -> Boot_Jump.h, Boot_Jump.c
+        dev    -> dev_agent / Ollama:qwen3-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+[CHECK] Firmware Update -> Boot_Update.h, Boot_Update.c
+        dev    -> dev_agent / Ollama:qwen3-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+[CHECK] Boot Protocol -> Boot_Protocol.h, Boot_Protocol.c
+        dev    -> dev_agent / Ollama:qwen3-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+[CHECK] Boot Safety -> Boot_Safety.h, Boot_Safety.c
+        dev    -> dev_agent / Ollama:qwen3-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+
+[MODULE] Generating: MCU Base
+         Files: Boot_Mcu.h, Boot_Mcu.c
+         Desc: Startup support, interrupt control, and flash memory primitives
+         [dev_agent] Loading module: MCU Base

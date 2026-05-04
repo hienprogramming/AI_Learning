@@ -32,7 +32,7 @@ load_local_env()
 # Initialize Gemini client (uses GOOGLE_API_KEY from environment or .env)
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
-OLLAMA_FALLBACK_MODEL = os.getenv("OLLAMA_DEV_MODEL", "qwen2.5-coder")
+OLLAMA_FALLBACK_MODEL = os.getenv("OLLAMA_DEV_MODEL", "qwen2.5-coder:latest")
 DEV_AGENT_PROVIDER = os.getenv("DEV_AGENT_PROVIDER", "gemini").lower()
 _gemini_disabled_reason: str | None = None
 

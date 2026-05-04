@@ -1,78 +1,104 @@
-#include "stm32f10x.h"
 #include "Boot_Mcu.h"
+#include "stm32f10x.h"
 
-#define FLASH_PAGE_SIZE 2048 // 2KB
+// Constants for flash operations
+#define FLASH_PAGE_SIZE 1024
+#define FLASH_SECTOR_SIZE (FLASH_PAGE_SIZE * 8)
+#define FLASH_START_ADDRESS 0x08000000
 
-// Function prototypes
-void Boot_Flash_Erase(uint32_t address, uint32_t length);
-void Boot_Flash_Write(uint32_t address, const uint8_t* data, uint32_t length);
-void Boot_Flash_Read(uint32_t address, uint8_t* data, uint32_t length);
-
-// Static buffer for flash operations
-uint8_t FlashBuffer[FLASH_PAGE_SIZE];
-
+// Function to initialize MCU resources needed by the bootloader
 void Boot_Mcu_Init(void) {
-    // Enable the FLASH control clock
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);
-    PWR_BackupAccessCmd(ENABLE);
-
-    // Unlock the FLASH Program Erase Controller
-    FLASH_Unlock();
+    // Enable clock for GPIO and AFIO
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO, ENABLE);
+    
+    // Disable all interrupts to ensure a clean state
+    __disable_irq();
 }
 
+// Function to deinitialize resources before jumping to application
 void Boot_Mcu_DeInit(void) {
-    // Lock the FLASH Program Erase Controller
-    FLASH_Lock();
-
-    // Disable the FLASH control clock
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, DISABLE);
-    PWR_BackupAccessCmd(DISABLE);
+    // Enable clock for GPIO and AFIO
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO, ENABLE);
+    
+    // Re-enable all interrupts after the bootloader has completed its task
+    __enable_irq();
 }
 
+// Function to disable interrupts safely
 void Boot_Mcu_DisableInterrupts(void) {
     __disable_irq();
 }
 
+// Function to erase flash pages/sectors
 void Boot_Flash_Erase(uint32_t address, uint32_t length) {
-    // Calculate the number of pages to erase
-    uint16_t num_pages = (length + FLASH_PAGE_SIZE - 1) / FLASH_PAGE_SIZE;
-
-    for (uint16_t i = 0; i < num_pages; i++) {
-        // Erase a page
-        FLASH_EraseInitTypeDef EraseInitStruct;
-        EraseInitStruct.TypeErase = FLASH_TypeErase_Page;
-        EraseInitStruct.PageAddress = address + i * FLASH_PAGE_SIZE;
-        EraseInitStruct.NbPages = 1;
-
-        if (FLASH_Erase(&EraseInitStruct, NULL) != FLASH_ProgramError) {
-            // Wait for the erase operation to complete
-            while (FLASH_GetFlagStatus(FLASH_FLAG_BSY) != RESET);
+    FLASH_Unlock();
+    
+    for (uint32_t page_address = address; page_address < address + length; page_address += FLASH_PAGE_SIZE) {
+        FLASH_EraseInitTypeDef eraseInitStruct;
+        eraseInitStruct.TypeErase = FLASH_TYPEERASE_PAGES;
+        eraseInitStruct.PageAddress = page_address;
+        eraseInitStruct.NbPages = 1;
+        
+        uint32_t sectorError = 0;
+        if (FLASH_Erase(&eraseInitStruct, &sectorError) != FLASH_COMPLETE) {
+            // Handle error
+            while (1);
         }
     }
+    
+    FLASH_Lock();
 }
 
+// Function to write firmware bytes to flash
 void Boot_Flash_Write(uint32_t address, const uint8_t* data, uint32_t length) {
-    // Calculate the number of bytes to write
-    uint16_t num_bytes = (length + 3) / 4;
-
-    for (uint16_t i = 0; i < num_bytes; i++) {
-        // Copy data into buffer
-        FlashBuffer[i * 4] = data[i * 4];
-        if (i * 4 + 1 < length) FlashBuffer[i * 4 + 1] = data[i * 4 + 1];
-        else FlashBuffer[i * 4 + 1] = 0xFF;
-        if (i * 4 + 2 < length) FlashBuffer[i * 4 + 2] = data[i * 4 + 2];
-        else FlashBuffer[i * 4 + 2] = 0xFF;
-        if (i * 4 + 3 < length) FlashBuffer[i * 4 + 3] = data[i * 4 + 3];
-        else FlashBuffer[i * 4 + 3] = 0xFF;
-
-        // Program the buffer
-        if (FLASH_Program(FLASH_ProgramWord, address + i * 4, *(uint32_t*)FlashBuffer) != FLASH_ProgramError) {
-            // Wait for the program operation to complete
-            while (FLASH_GetFlagStatus(FLASH_FLAG_BSY) != RESET);
+    if ((address & 0x7) != 0) {
+        // Address must be aligned to a word boundary (4 bytes)
+        while ((length > 0) && ((address & 0x7) != 0)) {
+            *(__IO uint8_t*) address = *data;
+            address++;
+            data++;
+            length--;
         }
     }
+
+    if (length >= 4) {
+        uint32_t* word_ptr = (__IO uint32_t*) address;
+        while (length >= 4) {
+            *word_ptr++ = *((uint32_t*) data);
+            data += 4;
+            length -= 4;
+        }
+    }
+
+    if ((length & 0x3) != 0) {
+        // Handle remaining bytes
+        uint32_t word = *(__IO uint32_t*) (address - 4);
+        while (length > 0) {
+            word >>= 8;
+            *(__IO uint8_t*) address = *data;
+            data++;
+            length--;
+            address++;
+        }
+        *word_ptr = word;
+    }
+
+    FLASH_Unlock();
+    
+    for (uint32_t write_address = address; write_address < address + length; write_address += 4) {
+        __IO uint32_t* word_ptr = (__IO uint32_t*) write_address;
+        while (*word_ptr != *((uint32_t*) data)) {
+            *word_ptr = *((uint32_t*) data);
+        }
+    }
+    
+    FLASH_Lock();
 }
 
+// Function to read flash bytes
 void Boot_Flash_Read(uint32_t address, uint8_t* data, uint32_t length) {
-    memcpy(data, (uint8_t*)address, length);
+    while (length > 0) {
+        *data++ = *(__IO uint8_t*) address++;
+        length--;
+    }
 }
