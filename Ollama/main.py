@@ -78,91 +78,88 @@ def main():
         "fix": f"fixer_agent / Ollama:{fixer_agent.MODEL}",
     }
 
-    output_dir = Path("SrcCodeProduct")
+    output_dir = Path("BootLoader")
     output_dir.mkdir(exist_ok=True)
 
-    # Define AUTOSAR Comstack modules to generate
+    project_context = (
+        "I am coding for an embedded STM32F103C8T6 microcontroller. "
+        "I need to create a bootloader with the following modules:\n\n"
+    )
+
+    # Define bootloader modules to generate
     modules = [
         {
-            "name": "ComStack_Types",
-            "files": ["ComStack_Types.h"],
-            "desc": "Type definitions and configuration",
-            "req": """Create AUTOSAR ComStack type definitions header file (ComStack_Types.h) with:
-- Signal types (uint8, uint16, uint32, etc.)
-- PDU configuration structures
-- Signal configuration structures  
-- Com_SignalType enum
-- PduR_PduIdType, CanIf_HrhType definitions
-- Maximum limits (MAX_SIGNALS=8, MAX_PDUS=4)
-- Status and return codes (E_OK, E_NOT_OK)
-No implementation, only type definitions and macros."""
+            "name": "MCU Base",
+            "files": ["Boot_Mcu.h", "Boot_Mcu.c"],
+            "desc": "Startup support, interrupt control, and flash memory primitives",
+            "req": """Create basic MCU support code for an STM32F103C8T6 bootloader:
+- Boot_Mcu_Init(): initialize MCU resources needed by the bootloader
+- Boot_Mcu_DeInit(): deinitialize resources before jumping to application
+- Boot_Mcu_DisableInterrupts(): disable interrupts safely
+- Boot_Flash_Erase(address, length): erase flash pages/sectors
+- Boot_Flash_Write(address, data, length): write firmware bytes to flash
+- Boot_Flash_Read(address, data, length): read flash bytes
+- Use static allocation only, no malloc
+- Provide Boot_Mcu.h and Boot_Mcu.c""",
         },
         {
-            "name": "COM Module",
-            "files": ["Com.h", "Com.c"],
-            "desc": "Signal encoding/decoding, filtering, triggering",
-            "req": """Implement AUTOSAR COM Module (Com.c, Com.h) for ARM Cortex-M:
-- Com_Init(): Initialize COM module
-- Com_SendSignal(SignalId, SignalDataPtr): Send signal
-- Com_ReceiveSignal(SignalId, SignalDataPtr): Receive signal
-- Com_MainFunctionTx(): Main function for transmission (10ms)
-- Com_MainFunctionRx(): Main function for reception (10ms)
-- Signal filtering and triggering logic
-- Event-triggered and periodic transmission support
-- Support 8 signals maximum
-- Use static buffers (no malloc)
-- For STM32F4, include types from ComStack_Types.h"""
+            "name": "Boot Jump",
+            "files": ["Boot_Jump.h", "Boot_Jump.c"],
+            "desc": "Bootloader/application memory layout and jump-to-application logic",
+            "req": """Create bootloader jump code for STM32F103C8T6:
+- Bootloader starts at 0x08000000
+- Application starts at 0x08008000
+- Boot_IsApplicationValid(): validate application stack pointer and reset vector
+- Boot_JumpToApplication(): set MSP and jump to application reset handler
+- Disable interrupts before jump
+- Do not use malloc
+- Provide Boot_Jump.h and Boot_Jump.c""",
         },
         {
-            "name": "PDU Router",
-            "files": ["PduR.h", "PduR.c"],
-            "desc": "PDU routing between layers",
-            "req": """Implement AUTOSAR PDU Router Module (PduR.c, PduR.h) for ARM Cortex-M:
-- PduR_Init(): Initialize PDU Router
-- PduR_Transmit(PduId, PduInfoPtr): Transmit PDU down
-- PduR_RxIndication(PduId, PduInfoPtr): Indicate PDU reception
-- PduR_TxConfirmation(PduId): Confirm transmission
-- Static routing table for COM <-> CanIf
-- Handle 4 PDUs maximum
-- Use static buffers (no malloc)
-- Clear separation between upper and lower layers
-- For STM32F4, include types from ComStack_Types.h"""
+            "name": "Firmware Update",
+            "files": ["Boot_Update.h", "Boot_Update.c"],
+            "desc": "Firmware update flow over UART with erase, write, verify, and jump commands",
+            "req": """Create firmware update logic for a small STM32F103C8T6 bootloader:
+- Support commands CMD_ERASE, CMD_WRITE, CMD_VERIFY, CMD_JUMP
+- Use UART as the transport abstraction
+- Boot_Update_Init(): initialize update state
+- Boot_Update_ProcessPacket(data, length): parse and execute one packet
+- Write firmware to application address 0x08008000
+- Verify image with CRC before allowing jump
+- Use static buffers only, no malloc
+- Provide Boot_Update.h and Boot_Update.c""",
         },
         {
-            "name": "CAN Interface",
-            "files": ["CanIf.h", "CanIf.c"],
-            "desc": "CAN frame transmission/reception",
-            "req": """Implement AUTOSAR CAN Interface Module (CanIf.c, CanIf.h) for ARM Cortex-M:
-- CanIf_Init(): Initialize CAN interface
-- CanIf_Transmit(CanTxPduId, PduInfoPtr): Send CAN frame
-- CanIf_RxIndication(HrhId, CanId, DataPtr): Receive CAN frame callback
-- CanIf_TxConfirmation(CanTxPduId): TX confirmation callback
-- Frame ID mapping (PDU ID <-> CAN ID)
-- Support 4 CAN frames (IDs: 0x100, 0x200, 0x300, 0x400)
-- Hardware abstraction for STM32F4 CAN
-- Use static buffers (no malloc)
-- Include types from ComStack_Types.h"""
+            "name": "Boot Protocol",
+            "files": ["Boot_Protocol.h", "Boot_Protocol.c"],
+            "desc": "Packet protocol definitions and parser for bootloader commands",
+            "req": """Create a simple bootloader protocol module:
+- Define command IDs CMD_ERASE, CMD_WRITE, CMD_VERIFY, CMD_JUMP
+- Define ACK/NACK response codes
+- Define packet format with command, address, length, payload, and CRC
+- Boot_Protocol_ParsePacket(): validate and decode a received packet
+- Boot_Protocol_BuildResponse(): build ACK/NACK response packet
+- No dynamic allocation
+- Provide Boot_Protocol.h and Boot_Protocol.c""",
         },
         {
-            "name": "CAN Transport Protocol",
-            "files": ["CanTp.h", "CanTp.c"],
-            "desc": "Segmentation, reassembly, flow control",
-            "req": """Implement AUTOSAR CAN Transport Protocol Module (CanTp.c, CanTp.h) for ARM Cortex-M:
-- CanTp_Init(): Initialize CAN TP
-- CanTp_Transmit(TxPduId, PduInfoPtr): Transmit large data (segmentation)
-- CanTp_RxIndication(RxPduId, PduInfoPtr): Receive segmented data
-- CanTp_MainFunction(): Main state machine (10ms)
-- Consecutive Frame numbering
-- Flow Control handling (CTS, WAIT, OVERFLOW)
-- Timeout management (BS=0, STmin=0)
-- Support SF (Single Frame) and FF (First Frame) types
-- Use static buffers (no malloc)
-- For STM32F4, include types from ComStack_Types.h"""
-        }
+            "name": "Boot Safety",
+            "files": ["Boot_Safety.h", "Boot_Safety.c"],
+            "desc": "CRC check, image validation, rollback hooks, and dual-bank metadata",
+            "req": """Create bootloader safety support code:
+- CRC32 calculation for firmware image verification
+- Image metadata structure with version, size, start address, CRC, and state
+- Boot_Safety_VerifyImage(): verify metadata and CRC
+- Boot_Safety_MarkImageValid(): mark an image as valid
+- Boot_Safety_RequestRollback(): set rollback flag if update fails
+- Include dual-bank A/B metadata concepts
+- Use static allocation only, no malloc
+- Provide Boot_Safety.h and Boot_Safety.c""",
+        },
     ]
 
     print("=" * 60)
-    print("[*] AUTOSAR Comstack Code Generation")
+    print("[*] Bootloader Code Generation")
     print("=" * 60)
     print_agent_plan(modules, agents)
 
@@ -173,7 +170,7 @@ No implementation, only type definitions and macros."""
         
         # Generate code for this module
         log_agent("dev_agent", module_info["name"], "Loading module")
-        code = dev_agent.run(module_info['req'])
+        code = dev_agent.run(project_context + module_info['req'])
         log_agent("dev_agent", module_info["name"], "Finished module")
         print("         [OK] Code generated", flush=True)
 
@@ -196,7 +193,7 @@ No implementation, only type definitions and macros."""
             save_file(output_dir, filename, content)
 
     print("\n" + "=" * 60)
-    print("[SUCCESS] AUTOSAR Comstack generation complete!")
+    print("[SUCCESS] Bootloader generation complete!")
     print(f"[OUTPUT] All files saved to: {output_dir.absolute()}")
     print("=" * 60)
 
