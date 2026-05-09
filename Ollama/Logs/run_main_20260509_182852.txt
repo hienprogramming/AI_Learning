@@ -1,0 +1,1135 @@
+
+============================================================
+[*] Runtime Environment Configuration
+============================================================
+    os_name           : Windows
+    os_version        : 11
+    python_version    : 3.12.10
+    architecture      : AMD64
+    shell             : powershell
+    path_sep          : \
+    line_sep          : '\r\n'
+============================================================
+
+
+============================================================
+[*] OS Task Mappings
+============================================================
+    activate_venv       : venv\Scripts\Activate.ps1
+    python_exec         : python.exe
+    pip_exec            : pip.exe
+    shell_exec          : powershell
+    run_script          : <callable>
+    set_env             : <callable>
+    path_join           : <callable>
+============================================================
+
+[RTE] Configuration saved to: Logs\rte_config.json
+
+============================================================
+[*] AUTOSAR Product RTE -> OS Task Mapping
+============================================================
+    Project: DigitalKey_AUTOSAR_Prototype
+
+    OsTask_Init            period=0ms     priority=1  activation=autostart    -> Rte_Runnable_App_Init
+    OsTask_App_10ms        period=10ms    priority=3  activation=alarm        -> Rte_Runnable_App_10ms
+    OsTask_App_100ms       period=100ms   priority=5  activation=alarm        -> Rte_Runnable_App_100ms
+    OsTask_Background      period=0ms     priority=10 activation=cooperative  -> Rte_Runnable_Background
+============================================================
+
+[*] Running environment check...
+
+
+
+======================================================================
+[*] PHASE 1: CODE GENERATION & TESTING
+======================================================================
+
+======================================================================
+[*] Bootloader Code Generation with Detailed Logging
+======================================================================
+
+============================================================
+[*] Agent/module pre-check plan
+============================================================
+[AGENTS]
+        dev   : dev_agent / Ollama:qwen2.5-coder:latest
+        test  : tester_agent / Ollama:llama3
+        fix   : fixer_agent / Ollama:qwen2.5-coder
+
+[CHECK] MCU Base -> Boot_Mcu.h, Boot_Mcu.c
+        dev    -> dev_agent / Ollama:qwen2.5-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+[CHECK] Boot Jump -> Boot_Jump.h, Boot_Jump.c
+        dev    -> dev_agent / Ollama:qwen2.5-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+[CHECK] Firmware Update -> Boot_Update.h, Boot_Update.c
+        dev    -> dev_agent / Ollama:qwen2.5-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+[CHECK] Boot Protocol -> Boot_Protocol.h, Boot_Protocol.c
+        dev    -> dev_agent / Ollama:qwen2.5-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+[CHECK] Boot Safety -> Boot_Safety.h, Boot_Safety.c
+        dev    -> dev_agent / Ollama:qwen2.5-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+
+[MODULE] MCU Base
+======================================================================
+  Files:       Boot_Mcu.h, Boot_Mcu.c
+  Description: Startup support, interrupt control, and flash memory primitives
+======================================================================
+
+[PHASE 1/3] CODE GENERATION
+  Agent:   dev_agent / Ollama:qwen2.5-coder:latest
+  Status:  Running dev_agent...
+         [dev_agent] Loading module: MCU Base
+         [dev_agent] Finished module: MCU Base
+  Status:  ✓ Code generated successfully
+  Details: 141 lines, ~4729 bytes
+
+[PHASE 2/3] TESTING & VALIDATION
+  Agent:   tester_agent / Ollama:llama3
+  Purpose: Validate code quality, syntax, symbols, and functionality
+  Checks:  deterministic static checks + LLM checklist review
+           - undefined #define/typedef-like symbols
+           - placeholder/TODO text
+           - dynamic memory usage
+           - AUTOSAR/embedded C checklist
+  Status:  Running tester_agent...
+         [tester_agent] Loading module: MCU Base
+         [tester_agent] Finished module: MCU Base
+  Static:  9 deterministic issue(s)
+  LLM:     review available
+  Status:  ⚠ Issues detected - 15 problem(s) found
+
+  [ISSUES DETECTED]
+    1. [ERROR   ] Symbol FLASH is used but no #define/typedef was found in generated cod
+    2. [ERROR   ] Symbol FLASH_CR_LOCK is used but no #define/typedef was found in gener
+    3. [ERROR   ] Symbol FLASH_CR_PER is used but no #define/typedef was found in genera
+    4. [ERROR   ] Symbol FLASH_CR_PG is used but no #define/typedef was found in generat
+    5. [ERROR   ] Symbol FLASH_CR_STRT is used but no #define/typedef was found in gener
+    ... and 10 more issues
+
+[PHASE 3/3] FIXING & IMPROVEMENT
+  Agent:   fixer_agent / Ollama:qwen2.5-coder
+  Purpose: Fix issues and improve code quality
+  Issues:  Fixing 15 detected problem(s)
+  Status:  Running fixer_agent...
+         [fixer_agent] Loading module: MCU Base
+  Fix log: Passing actionable issue list to fixer_agent
+           Deterministic static findings:
+           - [ERROR] undefined_symbol: Symbol FLASH is used but no #define/typedef was found in generated code 
+             Fix hint: Define FLASH in the module header/config header, include the header that defines it, or 
+           - [ERROR] undefined_symbol: Symbol FLASH_CR_LOCK is used but no #define/typedef was found in generat
+             Fix hint: Define FLASH_CR_LOCK in the module header/config header, include the header that defines
+           - [ERROR] undefined_symbol: Symbol FLASH_CR_PER is used but no #define/typedef was found in generate
+             Fix hint: Define FLASH_CR_PER in the module header/config header, include the header that defines 
+           - [ERROR] undefined_symbol: Symbol FLASH_CR_PG is used but no #define/typedef was found in generated
+           ...
+         [fixer_agent] Finished module: MCU Base
+  Status:  ✓ Fixes applied successfully
+  Details: Fixed 15 issue(s) from tester feedback
+
+[PHASE 4/4] SAVING FILES
+  Output:  C:\Working\AI-LEARNING\AI-Agent\AI_Learning\Ollama\SrcCodeProduct\BootLoader
+  Files to save:
+      [OK] Boot_Mcu.h
+      [OK] Boot_Mcu.c
+
+======================================================================
+[REPORT] Test Report for: MCU Base
+======================================================================
+
+[STAGES]
+  CODE GENERATION      [SUCCESS]             - Generated 141 lines of code
+  TESTING              [ISSUES FOUND]       
+  FIXING               [FIXES APPLIED]       - Fixed 15 issues
+
+[ERRORS FOUND] (15 issues)
+  1. [ERROR]    Line -: undefined_symbol Symbol FLASH is used but no #define/typedef was found in generated code or SrcCo
+     Fix hint: Define FLASH in the module header/config header, include the header that defines it, or replace it w
+  2. [ERROR]    Line -: undefined_symbol Symbol FLASH_CR_LOCK is used but no #define/typedef was found in generated code 
+     Fix hint: Define FLASH_CR_LOCK in the module header/config header, include the header that defines it, or repl
+  3. [ERROR]    Line -: undefined_symbol Symbol FLASH_CR_PER is used but no #define/typedef was found in generated code o
+     Fix hint: Define FLASH_CR_PER in the module header/config header, include the header that defines it, or repla
+  4. [ERROR]    Line -: undefined_symbol Symbol FLASH_CR_PG is used but no #define/typedef was found in generated code or
+     Fix hint: Define FLASH_CR_PG in the module header/config header, include the header that defines it, or replac
+  5. [ERROR]    Line -: undefined_symbol Symbol FLASH_CR_STRT is used but no #define/typedef was found in generated code 
+     Fix hint: Define FLASH_CR_STRT in the module header/config header, include the header that defines it, or repl
+  6. [ERROR]    Line -: undefined_symbol Symbol FLASH_SR_BSY is used but no #define/typedef was found in generated code o
+     Fix hint: Define FLASH_SR_BSY in the module header/config header, include the header that defines it, or repla
+  7. [ERROR]    Line -: undefined_symbol Symbol FLASH_SR_EOP is used but no #define/typedef was found in generated code o
+     Fix hint: Define FLASH_SR_EOP in the module header/config header, include the header that defines it, or repla
+  8. [ERROR]    Line -: undefined_symbol Symbol FLASH_SR_PGERR is used but no #define/typedef was found in generated code
+     Fix hint: Define FLASH_SR_PGERR in the module header/config header, include the header that defines it, or rep
+  9. [ERROR]    Line -: undefined_symbol Symbol STM32F103C8T6 is used but no #define/typedef was found in generated code 
+     Fix hint: Define STM32F103C8T6 in the module header/config header, include the header that defines it, or repl
+  10. [WARNING]  Line -: llm_checklist category_name: AUTOSAR Compliance: Function/variable names use the correct modul
+     Fix hint: Review the failed checklist item and update the generated code.
+  11. [WARNING]  Line -: llm_checklist category_name: Embedded C Best Practices: No undefined behavior
+     Fix hint: Review the failed checklist item and update the generated code.
+  12. [WARNING]  Line -: llm_checklist category_name: Code Correctness: Code matches the requirement
+     Fix hint: Review the failed checklist item and update the generated code.
+  13. [WARNING]  Line -: llm_checklist category_name: Type Safety: Data sizes match values and buffer lengths
+     Fix hint: Review the failed checklist item and update the generated code.
+  14. [WARNING]  Line -: llm_checklist category_name: Unit Test Compatibility: Functions are testable in isolation
+     Fix hint: Review the failed checklist item and update the generated code.
+  15. [WARNING]  Line -: llm_checklist category_name: Unit Test Compatibility: No hardcoded dependencies that prevent m
+     Fix hint: Review the failed checklist item and update the generated code.
+
+[FIXES APPLIED] (1 fix(es))
+  1. Fixed 15 issue(s) from tester feedback
+     Lines changed: +8
+
+======================================================================
+
+
+[MODULE] Boot Jump
+======================================================================
+  Files:       Boot_Jump.h, Boot_Jump.c
+  Description: Bootloader/application memory layout and jump-to-application logic
+======================================================================
+
+[PHASE 1/3] CODE GENERATION
+  Agent:   dev_agent / Ollama:qwen2.5-coder:latest
+  Status:  Running dev_agent...
+         [dev_agent] Loading module: Boot Jump
+         [dev_agent] Finished module: Boot Jump
+  Status:  ✓ Code generated successfully
+  Details: 110 lines, ~3180 bytes
+
+[PHASE 2/3] TESTING & VALIDATION
+  Agent:   tester_agent / Ollama:llama3
+  Purpose: Validate code quality, syntax, symbols, and functionality
+  Checks:  deterministic static checks + LLM checklist review
+           - undefined #define/typedef-like symbols
+           - placeholder/TODO text
+           - dynamic memory usage
+           - AUTOSAR/embedded C checklist
+  Status:  Running tester_agent...
+         [tester_agent] Loading module: Boot Jump
+         [tester_agent] Finished module: Boot Jump
+  Static:  5 deterministic issue(s)
+  LLM:     review unavailable/parse failed
+  Status:  ⚠ Issues detected - 6 problem(s) found
+
+  [ISSUES DETECTED]
+    1. [ERROR   ] Symbol MSP is used but no #define/typedef was found in generated code 
+    2. [ERROR   ] Symbol MSR is used but no #define/typedef was found in generated code 
+    3. [ERROR   ] Symbol RAM is used but no #define/typedef was found in generated code 
+    4. [ERROR   ] Symbol STM32F103C8T6 is used but no #define/typedef was found in gener
+    5. [WARNING ] Placeholder/incomplete implementation text remains: Sure, I can help y
+    ... and 1 more issues
+
+[PHASE 3/3] FIXING & IMPROVEMENT
+  Agent:   fixer_agent / Ollama:qwen2.5-coder
+  Purpose: Fix issues and improve code quality
+  Issues:  Fixing 6 detected problem(s)
+  Status:  Running fixer_agent...
+         [fixer_agent] Loading module: Boot Jump
+  Fix log: Passing actionable issue list to fixer_agent
+           Deterministic static findings:
+           - [ERROR] undefined_symbol: Symbol MSP is used but no #define/typedef was found in generated code or
+             Fix hint: Define MSP in the module header/config header, include the header that defines it, or re
+           - [ERROR] undefined_symbol: Symbol MSR is used but no #define/typedef was found in generated code or
+             Fix hint: Define MSR in the module header/config header, include the header that defines it, or re
+           - [ERROR] undefined_symbol: Symbol RAM is used but no #define/typedef was found in generated code or
+             Fix hint: Define RAM in the module header/config header, include the header that defines it, or re
+           - [ERROR] undefined_symbol: Symbol STM32F103C8T6 is used but no #define/typedef was found in generat
+           ...
+         [fixer_agent] Finished module: Boot Jump
+  Status:  ✓ Fixes applied successfully
+  Details: Fixed 6 issue(s) from tester feedback
+
+[PHASE 4/4] SAVING FILES
+  Output:  C:\Working\AI-LEARNING\AI-Agent\AI_Learning\Ollama\SrcCodeProduct\BootLoader
+  Files to save:
+      [OK] Boot_Jump.h
+      [OK] Boot_Jump.c
+
+======================================================================
+[REPORT] Test Report for: Boot Jump
+======================================================================
+
+[STAGES]
+  CODE GENERATION      [SUCCESS]             - Generated 110 lines of code
+  TESTING              [ISSUES FOUND]       
+  FIXING               [FIXES APPLIED]       - Fixed 6 issues
+
+[ERRORS FOUND] (6 issues)
+  1. [ERROR]    Line -: undefined_symbol Symbol MSP is used but no #define/typedef was found in generated code or SrcCode
+     Fix hint: Define MSP in the module header/config header, include the header that defines it, or replace it wit
+  2. [ERROR]    Line -: undefined_symbol Symbol MSR is used but no #define/typedef was found in generated code or SrcCode
+     Fix hint: Define MSR in the module header/config header, include the header that defines it, or replace it wit
+  3. [ERROR]    Line -: undefined_symbol Symbol RAM is used but no #define/typedef was found in generated code or SrcCode
+     Fix hint: Define RAM in the module header/config header, include the header that defines it, or replace it wit
+  4. [ERROR]    Line -: undefined_symbol Symbol STM32F103C8T6 is used but no #define/typedef was found in generated code 
+     Fix hint: Define STM32F103C8T6 in the module header/config header, include the header that defines it, or repl
+  5. [WARNING]  Line 1: placeholder_code Placeholder/incomplete implementation text remains: Sure, I can help you create 
+     Fix hint: Replace placeholder text with concrete project constants or real implementation.
+  6. [WARNING]  Line -: tester_agent tester_agent response parse error: Failed to parse JSON response
+     Fix hint: Check the raw LLM response in test_reports.json.
+
+[FIXES APPLIED] (1 fix(es))
+  1. Fixed 6 issue(s) from tester feedback
+     Lines changed: +4
+
+======================================================================
+
+
+[MODULE] Firmware Update
+======================================================================
+  Files:       Boot_Update.h, Boot_Update.c
+  Description: Firmware update flow over UART with erase, write, verify, and jump commands
+======================================================================
+
+[PHASE 1/3] CODE GENERATION
+  Agent:   dev_agent / Ollama:qwen2.5-coder:latest
+  Status:  Running dev_agent...
+         [dev_agent] Loading module: Firmware Update
+         [dev_agent] Finished module: Firmware Update
+  Status:  ✓ Code generated successfully
+  Details: 178 lines, ~4889 bytes
+
+[PHASE 2/3] TESTING & VALIDATION
+  Agent:   tester_agent / Ollama:llama3
+  Purpose: Validate code quality, syntax, symbols, and functionality
+  Checks:  deterministic static checks + LLM checklist review
+           - undefined #define/typedef-like symbols
+           - placeholder/TODO text
+           - dynamic memory usage
+           - AUTOSAR/embedded C checklist
+  Status:  Running tester_agent...
+         [tester_agent] Loading module: Firmware Update
+         [tester_agent] Finished module: Firmware Update
+  Static:  19 deterministic issue(s)
+  LLM:     review unavailable/parse failed
+  Status:  ⚠ Issues detected - 20 problem(s) found
+
+  [ISSUES DETECTED]
+    1. [ERROR   ] Symbol CRC is used but no #define/typedef was found in generated code 
+    2. [ERROR   ] Symbol FLASH is used but no #define/typedef was found in generated cod
+    3. [ERROR   ] Symbol FLASH_SECTOR_7 is used but no #define/typedef was found in gene
+    4. [ERROR   ] Symbol FLASH_TYPEERASE_SECTORS is used but no #define/typedef was foun
+    5. [ERROR   ] Symbol FLASH_TYPEPROGRAM_WORD is used but no #define/typedef was found
+    ... and 15 more issues
+
+[PHASE 3/3] FIXING & IMPROVEMENT
+  Agent:   fixer_agent / Ollama:qwen2.5-coder
+  Purpose: Fix issues and improve code quality
+  Issues:  Fixing 20 detected problem(s)
+  Status:  Running fixer_agent...
+         [fixer_agent] Loading module: Firmware Update
+  Fix log: Passing actionable issue list to fixer_agent
+           Deterministic static findings:
+           - [ERROR] undefined_symbol: Symbol CRC is used but no #define/typedef was found in generated code or
+             Fix hint: Define CRC in the module header/config header, include the header that defines it, or re
+           - [ERROR] undefined_symbol: Symbol FLASH is used but no #define/typedef was found in generated code 
+             Fix hint: Define FLASH in the module header/config header, include the header that defines it, or 
+           - [ERROR] undefined_symbol: Symbol FLASH_SECTOR_7 is used but no #define/typedef was found in genera
+             Fix hint: Define FLASH_SECTOR_7 in the module header/config header, include the header that define
+           - [ERROR] undefined_symbol: Symbol FLASH_TYPEERASE_SECTORS is used but no #define/typedef was found 
+           ...
+         [fixer_agent] Finished module: Firmware Update
+  Status:  ✓ Fixes applied successfully
+  Details: Fixed 20 issue(s) from tester feedback
+
+[PHASE 4/4] SAVING FILES
+  Output:  C:\Working\AI-LEARNING\AI-Agent\AI_Learning\Ollama\SrcCodeProduct\BootLoader
+  Files to save:
+      [OK] Boot_Update.h
+      [OK] Boot_Update.c
+
+======================================================================
+[REPORT] Test Report for: Firmware Update
+======================================================================
+
+[STAGES]
+  CODE GENERATION      [SUCCESS]             - Generated 178 lines of code
+  TESTING              [ISSUES FOUND]       
+  FIXING               [FIXES APPLIED]       - Fixed 20 issues
+
+[ERRORS FOUND] (20 issues)
+  1. [ERROR]    Line -: undefined_symbol Symbol CRC is used but no #define/typedef was found in generated code or SrcCode
+     Fix hint: Define CRC in the module header/config header, include the header that defines it, or replace it wit
+  2. [ERROR]    Line -: undefined_symbol Symbol FLASH is used but no #define/typedef was found in generated code or SrcCo
+     Fix hint: Define FLASH in the module header/config header, include the header that defines it, or replace it w
+  3. [ERROR]    Line -: undefined_symbol Symbol FLASH_SECTOR_7 is used but no #define/typedef was found in generated code
+     Fix hint: Define FLASH_SECTOR_7 in the module header/config header, include the header that defines it, or rep
+  4. [ERROR]    Line -: undefined_symbol Symbol FLASH_TYPEERASE_SECTORS is used but no #define/typedef was found in gener
+     Fix hint: Define FLASH_TYPEERASE_SECTORS in the module header/config header, include the header that defines i
+  5. [ERROR]    Line -: undefined_symbol Symbol FLASH_TYPEPROGRAM_WORD is used but no #define/typedef was found in genera
+     Fix hint: Define FLASH_TYPEPROGRAM_WORD in the module header/config header, include the header that defines it
+  6. [ERROR]    Line -: undefined_symbol Symbol FLASH_VOLTAGE_RANGE_3 is used but no #define/typedef was found in generat
+     Fix hint: Define FLASH_VOLTAGE_RANGE_3 in the module header/config header, include the header that defines it,
+  7. [ERROR]    Line -: undefined_symbol Symbol HAL is used but no #define/typedef was found in generated code or SrcCode
+     Fix hint: Define HAL in the module header/config header, include the header that defines it, or replace it wit
+  8. [ERROR]    Line -: undefined_symbol Symbol HAL_MAX_DELAY is used but no #define/typedef was found in generated code 
+     Fix hint: Define HAL_MAX_DELAY in the module header/config header, include the header that defines it, or repl
+  9. [ERROR]    Line -: undefined_symbol Symbol HAL_OK is used but no #define/typedef was found in generated code or SrcC
+     Fix hint: Define HAL_OK in the module header/config header, include the header that defines it, or replace it 
+  10. [ERROR]    Line -: undefined_symbol Symbol SCB is used but no #define/typedef was found in generated code or SrcCode
+     Fix hint: Define SCB in the module header/config header, include the header that defines it, or replace it wit
+  11. [ERROR]    Line -: undefined_symbol Symbol UART is used but no #define/typedef was found in generated code or SrcCod
+     Fix hint: Define UART in the module header/config header, include the header that defines it, or replace it wi
+  12. [ERROR]    Line -: undefined_symbol Symbol UART_HWCONTROL_NONE is used but no #define/typedef was found in generated
+     Fix hint: Define UART_HWCONTROL_NONE in the module header/config header, include the header that defines it, o
+  13. [ERROR]    Line -: undefined_symbol Symbol UART_MODE_TX_RX is used but no #define/typedef was found in generated cod
+     Fix hint: Define UART_MODE_TX_RX in the module header/config header, include the header that defines it, or re
+  14. [ERROR]    Line -: undefined_symbol Symbol UART_OVERSAMPLING_16 is used but no #define/typedef was found in generate
+     Fix hint: Define UART_OVERSAMPLING_16 in the module header/config header, include the header that defines it, 
+  15. [ERROR]    Line -: undefined_symbol Symbol UART_PARITY_NONE is used but no #define/typedef was found in generated co
+     Fix hint: Define UART_PARITY_NONE in the module header/config header, include the header that defines it, or r
+  16. [ERROR]    Line -: undefined_symbol Symbol UART_STOPBITS_1 is used but no #define/typedef was found in generated cod
+     Fix hint: Define UART_STOPBITS_1 in the module header/config header, include the header that defines it, or re
+  17. [ERROR]    Line -: undefined_symbol Symbol UART_WORDLENGTH_8B is used but no #define/typedef was found in generated 
+     Fix hint: Define UART_WORDLENGTH_8B in the module header/config header, include the header that defines it, or
+  18. [ERROR]    Line -: undefined_symbol Symbol USART1 is used but no #define/typedef was found in generated code or SrcC
+     Fix hint: Define USART1 in the module header/config header, include the header that defines it, or replace it 
+  19. [ERROR]    Line -: undefined_symbol Symbol VTOR is used but no #define/typedef was found in generated code or SrcCod
+     Fix hint: Define VTOR in the module header/config header, include the header that defines it, or replace it wi
+  20. [WARNING]  Line -: tester_agent tester_agent response parse error: Failed to parse JSON response
+     Fix hint: Check the raw LLM response in test_reports.json.
+
+[FIXES APPLIED] (1 fix(es))
+  1. Fixed 20 issue(s) from tester feedback
+     Lines changed: -149
+
+======================================================================
+
+
+[MODULE] Boot Protocol
+======================================================================
+  Files:       Boot_Protocol.h, Boot_Protocol.c
+  Description: Packet protocol definitions and parser for bootloader commands
+======================================================================
+
+[PHASE 1/3] CODE GENERATION
+  Agent:   dev_agent / Ollama:qwen2.5-coder:latest
+  Status:  Running dev_agent...
+         [dev_agent] Loading module: Boot Protocol
+         [dev_agent] Finished module: Boot Protocol
+  Status:  ✓ Code generated successfully
+  Details: 131 lines, ~4556 bytes
+
+[PHASE 2/3] TESTING & VALIDATION
+  Agent:   tester_agent / Ollama:llama3
+  Purpose: Validate code quality, syntax, symbols, and functionality
+  Checks:  deterministic static checks + LLM checklist review
+           - undefined #define/typedef-like symbols
+           - placeholder/TODO text
+           - dynamic memory usage
+           - AUTOSAR/embedded C checklist
+  Status:  Running tester_agent...
+         [tester_agent] Loading module: Boot Protocol
+         [tester_agent] Finished module: Boot Protocol
+  Static:  2 deterministic issue(s)
+  LLM:     review available
+  Status:  ⚠ Issues detected - 2 problem(s) found
+
+  [ISSUES DETECTED]
+    1. [ERROR   ] Symbol CRC is used but no #define/typedef was found in generated code 
+    2. [ERROR   ] Symbol XOR is used but no #define/typedef was found in generated code 
+
+[PHASE 3/3] FIXING & IMPROVEMENT
+  Agent:   fixer_agent / Ollama:qwen2.5-coder
+  Purpose: Fix issues and improve code quality
+  Issues:  Fixing 2 detected problem(s)
+  Status:  Running fixer_agent...
+         [fixer_agent] Loading module: Boot Protocol
+  Fix log: Passing actionable issue list to fixer_agent
+           Deterministic static findings:
+           - [ERROR] undefined_symbol: Symbol CRC is used but no #define/typedef was found in generated code or
+             Fix hint: Define CRC in the module header/config header, include the header that defines it, or re
+           - [ERROR] undefined_symbol: Symbol XOR is used but no #define/typedef was found in generated code or
+             Fix hint: Define XOR in the module header/config header, include the header that defines it, or re
+         [fixer_agent] Finished module: Boot Protocol
+  Status:  ✓ Fixes applied successfully
+  Details: Fixed 2 issue(s) from tester feedback
+
+[PHASE 4/4] SAVING FILES
+  Output:  C:\Working\AI-LEARNING\AI-Agent\AI_Learning\Ollama\SrcCodeProduct\BootLoader
+  Files to save:
+      [OK] Boot_Protocol.h
+      [OK] Boot_Protocol.c
+
+======================================================================
+[REPORT] Test Report for: Boot Protocol
+======================================================================
+
+[STAGES]
+  CODE GENERATION      [SUCCESS]             - Generated 131 lines of code
+  TESTING              [ISSUES FOUND]       
+  FIXING               [FIXES APPLIED]       - Fixed 2 issues
+
+[ERRORS FOUND] (2 issues)
+  1. [ERROR]    Line -: undefined_symbol Symbol CRC is used but no #define/typedef was found in generated code or SrcCode
+     Fix hint: Define CRC in the module header/config header, include the header that defines it, or replace it wit
+  2. [ERROR]    Line -: undefined_symbol Symbol XOR is used but no #define/typedef was found in generated code or SrcCode
+     Fix hint: Define XOR in the module header/config header, include the header that defines it, or replace it wit
+
+[FIXES APPLIED] (1 fix(es))
+  1. Fixed 2 issue(s) from tester feedback
+     Lines changed: -98
+
+======================================================================
+
+
+[MODULE] Boot Safety
+======================================================================
+  Files:       Boot_Safety.h, Boot_Safety.c
+  Description: CRC check, image validation, rollback hooks, and dual-bank metadata
+======================================================================
+
+[PHASE 1/3] CODE GENERATION
+  Agent:   dev_agent / Ollama:qwen2.5-coder:latest
+  Status:  Running dev_agent...
+         [dev_agent] Loading module: Boot Safety
+         [dev_agent] Finished module: Boot Safety
+  Status:  ✓ Code generated successfully
+  Details: 152 lines, ~4935 bytes
+
+[PHASE 2/3] TESTING & VALIDATION
+  Agent:   tester_agent / Ollama:llama3
+  Purpose: Validate code quality, syntax, symbols, and functionality
+  Checks:  deterministic static checks + LLM checklist review
+           - undefined #define/typedef-like symbols
+           - placeholder/TODO text
+           - dynamic memory usage
+           - AUTOSAR/embedded C checklist
+  Status:  Running tester_agent...
+         [tester_agent] Loading module: Boot Safety
+         [tester_agent] Finished module: Boot Safety
+  Static:  2 deterministic issue(s)
+  LLM:     review available
+  Status:  ⚠ Issues detected - 2 problem(s) found
+
+  [ISSUES DETECTED]
+    1. [WARNING ] Placeholder/incomplete implementation text remains: // Implement the c
+    2. [WARNING ] Placeholder/incomplete implementation text remains: // Implement the c
+
+[PHASE 3/3] FIXING & IMPROVEMENT
+  Agent:   fixer_agent / Ollama:qwen2.5-coder
+  Purpose: Fix issues and improve code quality
+  Issues:  Fixing 2 detected problem(s)
+  Status:  Running fixer_agent...
+         [fixer_agent] Loading module: Boot Safety
+  Fix log: Passing actionable issue list to fixer_agent
+           Deterministic static findings:
+           - [WARNING] placeholder_code line 125: Placeholder/incomplete implementation text remains: // Implem
+             Fix hint: Replace placeholder text with concrete project constants or real implementation.
+           - [WARNING] placeholder_code line 128: Placeholder/incomplete implementation text remains: // Implem
+             Fix hint: Replace placeholder text with concrete project constants or real implementation.
+         [fixer_agent] Finished module: Boot Safety
+  Status:  ✓ Fixes applied successfully
+  Details: Fixed 2 issue(s) from tester feedback
+
+[PHASE 4/4] SAVING FILES
+  Output:  C:\Working\AI-LEARNING\AI-Agent\AI_Learning\Ollama\SrcCodeProduct\BootLoader
+  Files to save:
+      [OK] Boot_Safety.h
+      [OK] Boot_Safety.c
+
+======================================================================
+[REPORT] Test Report for: Boot Safety
+======================================================================
+
+[STAGES]
+  CODE GENERATION      [SUCCESS]             - Generated 152 lines of code
+  TESTING              [ISSUES FOUND]       
+  FIXING               [FIXES APPLIED]       - Fixed 2 issues
+
+[ERRORS FOUND] (2 issues)
+  1. [WARNING]  Line 125: placeholder_code Placeholder/incomplete implementation text remains: // Implement the code to loa
+     Fix hint: Replace placeholder text with concrete project constants or real implementation.
+  2. [WARNING]  Line 128: placeholder_code Placeholder/incomplete implementation text remains: // Implement the code to loa
+     Fix hint: Replace placeholder text with concrete project constants or real implementation.
+
+[FIXES APPLIED] (1 fix(es))
+  1. Fixed 2 issue(s) from tester feedback
+     Lines changed: -20
+
+======================================================================
+
+
+[REPORTS] Test reports saved to: SrcCodeProduct\BootLoader\test_reports.json
+
+======================================================================
+[SUCCESS] Bootloader generation complete!
+[OUTPUT] All files saved to: C:\Working\AI-LEARNING\AI-Agent\AI_Learning\Ollama\SrcCodeProduct\BootLoader
+[REPORTS] Detailed test reports: SrcCodeProduct\BootLoader\test_reports.json
+======================================================================
+
+======================================================================
+[*] App (Digital Key) Code Generation with Detailed Logging
+======================================================================
+
+============================================================
+[*] Agent/module pre-check plan
+============================================================
+[AGENTS]
+        dev   : dev_agent / Ollama:qwen2.5-coder:latest
+        test  : tester_agent / Ollama:llama3
+        fix   : fixer_agent / Ollama:qwen2.5-coder
+
+[CHECK] Key Storage -> App_Key_Storage.h, App_Key_Storage.c
+        dev    -> dev_agent / Ollama:qwen2.5-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+[CHECK] Key Manager -> App_Key_Manager.h, App_Key_Manager.c
+        dev    -> dev_agent / Ollama:qwen2.5-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+[CHECK] Security Handler -> App_Security.h, App_Security.c
+        dev    -> dev_agent / Ollama:qwen2.5-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+[CHECK] ComStack Interface -> App_ComInterface.h, App_ComInterface.c
+        dev    -> dev_agent / Ollama:qwen2.5-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+[CHECK] App Main -> App_Main.h, App_Main.c
+        dev    -> dev_agent / Ollama:qwen2.5-coder:latest    : generate code
+        test   -> tester_agent / Ollama:llama3   : review generated code
+        fix    -> fixer_agent / Ollama:qwen2.5-coder    : fix issues from tester feedback
+
+[MODULE] Key Storage
+======================================================================
+  Files:       App_Key_Storage.h, App_Key_Storage.c
+  Description: Digital key storage with metadata and validation support
+======================================================================
+
+[PHASE 1/3] CODE GENERATION
+  Agent:   dev_agent / Ollama:qwen2.5-coder:latest
+  Status:  Running dev_agent...
+         [dev_agent] Loading module: Key Storage
+         [dev_agent] Finished module: Key Storage
+  Status:  ✓ Code generated successfully
+  Details: 126 lines, ~4481 bytes
+
+[PHASE 2/3] TESTING & VALIDATION
+  Agent:   tester_agent / Ollama:llama3
+  Purpose: Validate code quality, syntax, symbols, and functionality
+  Checks:  deterministic static checks + LLM checklist review
+           - undefined #define/typedef-like symbols
+           - placeholder/TODO text
+           - dynamic memory usage
+           - AUTOSAR/embedded C checklist
+  Status:  Running tester_agent...
+         [tester_agent] Loading module: Key Storage
+         [tester_agent] Finished module: Key Storage
+  Static:  1 deterministic issue(s)
+  LLM:     review available
+  Status:  ⚠ Issues detected - 6 problem(s) found
+
+  [ISSUES DETECTED]
+    1. [ERROR   ] Symbol CRC is used but no #define/typedef was found in generated code 
+    2. [WARNING ] Code Correctness: Dead code or unreachable statements - not found
+    3. [WARNING ] Type Safety: No inappropriate type casting
+    4. [WARNING ] AUTOSAR Compliance: Return types follow AUTOSAR/project conventions - 
+    5. [WARNING ] Unit Test Compatibility: Functions have single responsibility - not ch
+    ... and 1 more issues
+
+[PHASE 3/3] FIXING & IMPROVEMENT
+  Agent:   fixer_agent / Ollama:qwen2.5-coder
+  Purpose: Fix issues and improve code quality
+  Issues:  Fixing 6 detected problem(s)
+  Status:  Running fixer_agent...
+         [fixer_agent] Loading module: Key Storage
+  Fix log: Passing actionable issue list to fixer_agent
+           Deterministic static findings:
+           - [ERROR] undefined_symbol: Symbol CRC is used but no #define/typedef was found in generated code or
+             Fix hint: Define CRC in the module header/config header, include the header that defines it, or re
+           LLM checklist failures:
+           - Code Correctness: Dead code or unreachable statements - not found
+           - Type Safety: No inappropriate type casting
+           - AUTOSAR Compliance: Return types follow AUTOSAR/project conventions - not found
+           - Unit Test Compatibility: Functions have single responsibility - not checked
+           ...
+         [fixer_agent] Finished module: Key Storage
+  Status:  ✓ Fixes applied successfully
+  Details: Fixed 6 issue(s) from tester feedback
+
+[PHASE 4/4] SAVING FILES
+  Output:  C:\Working\AI-LEARNING\AI-Agent\AI_Learning\Ollama\SrcCodeProduct\App
+  Files to save:
+      [OK] App_Key_Storage.h
+      [OK] App_Key_Storage.c
+
+======================================================================
+[REPORT] Test Report for: Key Storage
+======================================================================
+
+[STAGES]
+  CODE GENERATION      [SUCCESS]             - Generated 126 lines of code
+  TESTING              [ISSUES FOUND]       
+  FIXING               [FIXES APPLIED]       - Fixed 6 issues
+
+[ERRORS FOUND] (6 issues)
+  1. [ERROR]    Line -: undefined_symbol Symbol CRC is used but no #define/typedef was found in generated code or SrcCode
+     Fix hint: Define CRC in the module header/config header, include the header that defines it, or replace it wit
+  2. [WARNING]  Line -: llm_checklist Code Correctness: Dead code or unreachable statements - not found
+     Fix hint: Review the failed checklist item and update the generated code.
+  3. [WARNING]  Line -: llm_checklist Type Safety: No inappropriate type casting
+     Fix hint: Review the failed checklist item and update the generated code.
+  4. [WARNING]  Line -: llm_checklist AUTOSAR Compliance: Return types follow AUTOSAR/project conventions - not found
+     Fix hint: Review the failed checklist item and update the generated code.
+  5. [WARNING]  Line -: llm_checklist Unit Test Compatibility: Functions have single responsibility - not checked
+     Fix hint: Review the failed checklist item and update the generated code.
+  6. [WARNING]  Line -: llm_checklist Unit Test Compatibility: Return values indicate success/failure clearly - not ch
+     Fix hint: Review the failed checklist item and update the generated code.
+
+[FIXES APPLIED] (1 fix(es))
+  1. Fixed 6 issue(s) from tester feedback
+     Lines changed: -14
+
+======================================================================
+
+
+[MODULE] Key Manager
+======================================================================
+  Files:       App_Key_Manager.h, App_Key_Manager.c
+  Description: Key lifecycle management, validation, and expiration
+======================================================================
+
+[PHASE 1/3] CODE GENERATION
+  Agent:   dev_agent / Ollama:qwen2.5-coder:latest
+  Status:  Running dev_agent...
+         [dev_agent] Loading module: Key Manager
+         [dev_agent] Finished module: Key Manager
+  Status:  ✓ Code generated successfully
+  Details: 112 lines, ~3650 bytes
+
+[PHASE 2/3] TESTING & VALIDATION
+  Agent:   tester_agent / Ollama:llama3
+  Purpose: Validate code quality, syntax, symbols, and functionality
+  Checks:  deterministic static checks + LLM checklist review
+           - undefined #define/typedef-like symbols
+           - placeholder/TODO text
+           - dynamic memory usage
+           - AUTOSAR/embedded C checklist
+  Status:  Running tester_agent...
+         [tester_agent] Loading module: Key Manager
+         [tester_agent] Finished module: Key Manager
+  Static:  5 deterministic issue(s)
+  LLM:     review available
+  Status:  ⚠ Issues detected - 11 problem(s) found
+
+  [ISSUES DETECTED]
+    1. [ERROR   ] Symbol BOOT_SAFETY_STATUS_OK is used but no #define/typedef was found 
+    2. [ERROR   ] Symbol BOOT_SAFETY_STATUS_UNKNOWN is used but no #define/typedef was f
+    3. [ERROR   ] Symbol KEY_EXPIRED is used but no #define/typedef was found in generat
+    4. [ERROR   ] Symbol KEY_INVALID is used but no #define/typedef was found in generat
+    5. [ERROR   ] Symbol KEY_VALID is used but no #define/typedef was found in generated
+    ... and 6 more issues
+
+[PHASE 3/3] FIXING & IMPROVEMENT
+  Agent:   fixer_agent / Ollama:qwen2.5-coder
+  Purpose: Fix issues and improve code quality
+  Issues:  Fixing 11 detected problem(s)
+  Status:  Running fixer_agent...
+         [fixer_agent] Loading module: Key Manager
+  Fix log: Passing actionable issue list to fixer_agent
+           Deterministic static findings:
+           - [ERROR] undefined_symbol: Symbol BOOT_SAFETY_STATUS_OK is used but no #define/typedef was found in
+             Fix hint: Define BOOT_SAFETY_STATUS_OK in the module header/config header, include the header that
+           - [ERROR] undefined_symbol: Symbol BOOT_SAFETY_STATUS_UNKNOWN is used but no #define/typedef was fou
+             Fix hint: Define BOOT_SAFETY_STATUS_UNKNOWN in the module header/config header, include the header
+           - [ERROR] undefined_symbol: Symbol KEY_EXPIRED is used but no #define/typedef was found in generated
+             Fix hint: Define KEY_EXPIRED in the module header/config header, include the header that defines i
+           - [ERROR] undefined_symbol: Symbol KEY_INVALID is used but no #define/typedef was found in generated
+           ...
+         [fixer_agent] Finished module: Key Manager
+  Status:  ✓ Fixes applied successfully
+  Details: Fixed 11 issue(s) from tester feedback
+
+[PHASE 4/4] SAVING FILES
+  Output:  C:\Working\AI-LEARNING\AI-Agent\AI_Learning\Ollama\SrcCodeProduct\App
+  Files to save:
+      [OK] App_Key_Manager.h
+      [OK] App_Key_Manager.c
+
+======================================================================
+[REPORT] Test Report for: Key Manager
+======================================================================
+
+[STAGES]
+  CODE GENERATION      [SUCCESS]             - Generated 112 lines of code
+  TESTING              [ISSUES FOUND]       
+  FIXING               [FIXES APPLIED]       - Fixed 11 issues
+
+[ERRORS FOUND] (11 issues)
+  1. [ERROR]    Line -: undefined_symbol Symbol BOOT_SAFETY_STATUS_OK is used but no #define/typedef was found in generat
+     Fix hint: Define BOOT_SAFETY_STATUS_OK in the module header/config header, include the header that defines it,
+  2. [ERROR]    Line -: undefined_symbol Symbol BOOT_SAFETY_STATUS_UNKNOWN is used but no #define/typedef was found in ge
+     Fix hint: Define BOOT_SAFETY_STATUS_UNKNOWN in the module header/config header, include the header that define
+  3. [ERROR]    Line -: undefined_symbol Symbol KEY_EXPIRED is used but no #define/typedef was found in generated code or
+     Fix hint: Define KEY_EXPIRED in the module header/config header, include the header that defines it, or replac
+  4. [ERROR]    Line -: undefined_symbol Symbol KEY_INVALID is used but no #define/typedef was found in generated code or
+     Fix hint: Define KEY_INVALID in the module header/config header, include the header that defines it, or replac
+  5. [ERROR]    Line -: undefined_symbol Symbol KEY_VALID is used but no #define/typedef was found in generated code or S
+     Fix hint: Define KEY_VALID in the module header/config header, include the header that defines it, or replace 
+  6. [WARNING]  Line -: llm_checklist Code Correctness: No dead code or unreachable statements - some return values no
+     Fix hint: Review the failed checklist item and update the generated code.
+  7. [WARNING]  Line -: llm_checklist Type Safety: Inappropriate type casting - none found
+     Fix hint: Review the failed checklist item and update the generated code.
+  8. [WARNING]  Line -: llm_checklist Type Safety: Data sizes match values and buffer lengths - static array size conf
+     Fix hint: Review the failed checklist item and update the generated code.
+  9. [WARNING]  Line -: llm_checklist AUTOSAR Compliance: Return types follow AUTOSAR/project conventions - not explic
+     Fix hint: Review the failed checklist item and update the generated code.
+  10. [WARNING]  Line -: llm_checklist Code Structure: No circular includes - none detected
+     Fix hint: Review the failed checklist item and update the generated code.
+  11. [WARNING]  Line -: llm_checklist Unit Test Compatibility: Return values indicate success/failure clearly - some r
+     Fix hint: Review the failed checklist item and update the generated code.
+
+[FIXES APPLIED] (1 fix(es))
+  1. Fixed 11 issue(s) from tester feedback
+     Lines changed: -6
+
+======================================================================
+
+
+[MODULE] Security Handler
+======================================================================
+  Files:       App_Security.h, App_Security.c
+  Description: Cryptographic operations and security primitives
+======================================================================
+
+[PHASE 1/3] CODE GENERATION
+  Agent:   dev_agent / Ollama:qwen2.5-coder:latest
+  Status:  Running dev_agent...
+         [dev_agent] Loading module: Security Handler
+         [dev_agent] Finished module: Security Handler
+  Status:  ✓ Code generated successfully
+  Details: 80 lines, ~3598 bytes
+
+[PHASE 2/3] TESTING & VALIDATION
+  Agent:   tester_agent / Ollama:llama3
+  Purpose: Validate code quality, syntax, symbols, and functionality
+  Checks:  deterministic static checks + LLM checklist review
+           - undefined #define/typedef-like symbols
+           - placeholder/TODO text
+           - dynamic memory usage
+           - AUTOSAR/embedded C checklist
+  Status:  Running tester_agent...
+         [tester_agent] Loading module: Security Handler
+         [tester_agent] Finished module: Security Handler
+  Static:  13 deterministic issue(s)
+  LLM:     review available
+  Status:  ⚠ Issues detected - 22 problem(s) found
+
+  [ISSUES DETECTED]
+    1. [ERROR   ] Symbol AES is used but no #define/typedef was found in generated code 
+    2. [ERROR   ] Symbol CRC32 is used but no #define/typedef was found in generated cod
+    3. [WARNING ] Placeholder/incomplete implementation text remains: // Placeholder for
+    4. [WARNING ] Placeholder/incomplete implementation text remains: // Verify digital 
+    5. [WARNING ] Placeholder/incomplete implementation text remains: // Placeholder: Al
+    ... and 17 more issues
+
+[PHASE 3/3] FIXING & IMPROVEMENT
+  Agent:   fixer_agent / Ollama:qwen2.5-coder
+  Purpose: Fix issues and improve code quality
+  Issues:  Fixing 22 detected problem(s)
+  Status:  Running fixer_agent...
+         [fixer_agent] Loading module: Security Handler
+  Fix log: Passing actionable issue list to fixer_agent
+           Deterministic static findings:
+           - [ERROR] undefined_symbol: Symbol AES is used but no #define/typedef was found in generated code or
+             Fix hint: Define AES in the module header/config header, include the header that defines it, or re
+           - [ERROR] undefined_symbol: Symbol CRC32 is used but no #define/typedef was found in generated code 
+             Fix hint: Define CRC32 in the module header/config header, include the header that defines it, or 
+           - [WARNING] placeholder_code line 38: Placeholder/incomplete implementation text remains: // Placeho
+             Fix hint: Replace placeholder text with concrete project constants or real implementation.
+           - [WARNING] placeholder_code line 48: Placeholder/incomplete implementation text remains: // Verify 
+           ...
+         [fixer_agent] Finished module: Security Handler
+  Status:  ✓ Fixes applied successfully
+  Details: Fixed 22 issue(s) from tester feedback
+
+[PHASE 4/4] SAVING FILES
+  Output:  C:\Working\AI-LEARNING\AI-Agent\AI_Learning\Ollama\SrcCodeProduct\App
+  Files to save:
+      [OK] App_Security.h
+      [OK] App_Security.c
+
+======================================================================
+[REPORT] Test Report for: Security Handler
+======================================================================
+
+[STAGES]
+  CODE GENERATION      [SUCCESS]             - Generated 80 lines of code
+  TESTING              [ISSUES FOUND]       
+  FIXING               [FIXES APPLIED]       - Fixed 22 issues
+
+[ERRORS FOUND] (22 issues)
+  1. [ERROR]    Line -: undefined_symbol Symbol AES is used but no #define/typedef was found in generated code or SrcCode
+     Fix hint: Define AES in the module header/config header, include the header that defines it, or replace it wit
+  2. [ERROR]    Line -: undefined_symbol Symbol CRC32 is used but no #define/typedef was found in generated code or SrcCo
+     Fix hint: Define CRC32 in the module header/config header, include the header that defines it, or replace it w
+  3. [WARNING]  Line 38: placeholder_code Placeholder/incomplete implementation text remains: // Placeholder for security 
+     Fix hint: Replace placeholder text with concrete project constants or real implementation.
+  4. [WARNING]  Line 48: placeholder_code Placeholder/incomplete implementation text remains: // Verify digital signature 
+     Fix hint: Replace placeholder text with concrete project constants or real implementation.
+  5. [WARNING]  Line 51: placeholder_code Placeholder/incomplete implementation text remains: // Placeholder: Always retur
+     Fix hint: Replace placeholder text with concrete project constants or real implementation.
+  6. [WARNING]  Line 56: placeholder_code Placeholder/incomplete implementation text remains: // Basic encryption wrapper 
+     Fix hint: Replace placeholder text with concrete project constants or real implementation.
+  7. [WARNING]  Line 58: placeholder_code Placeholder/incomplete implementation text remains: // Placeholder: Encrypt key 
+     Fix hint: Replace placeholder text with concrete project constants or real implementation.
+  8. [WARNING]  Line 65: placeholder_code Placeholder/incomplete implementation text remains: // Basic decryption wrapper 
+     Fix hint: Replace placeholder text with concrete project constants or real implementation.
+  9. [WARNING]  Line 67: placeholder_code Placeholder/incomplete implementation text remains: // Placeholder: Decrypt key 
+     Fix hint: Replace placeholder text with concrete project constants or real implementation.
+  10. [WARNING]  Line 76: placeholder_code Placeholder/incomplete implementation text remains: 1. **CRC32 Function**: Ensur
+     Fix hint: Replace placeholder text with concrete project constants or real implementation.
+  11. [WARNING]  Line 77: placeholder_code Placeholder/incomplete implementation text remains: 2. **Security Initialization
+     Fix hint: Replace placeholder text with concrete project constants or real implementation.
+  12. [WARNING]  Line 78: placeholder_code Placeholder/incomplete implementation text remains: 3. **Signature Verification*
+     Fix hint: Replace placeholder text with concrete project constants or real implementation.
+  13. [WARNING]  Line 79: placeholder_code Placeholder/incomplete implementation text remains: 4. **Encryption/Decryption**
+     Fix hint: Replace placeholder text with concrete project constants or real implementation.
+  14. [WARNING]  Line -: llm_checklist AUTOSAR Compliance: Return types follow AUTOSAR/project conventions - some funct
+     Fix hint: Review the failed checklist item and update the generated code.
+  15. [WARNING]  Line -: llm_checklist Embedded C Best Practices: No undefined behavior - some functions may behave une
+     Fix hint: Review the failed checklist item and update the generated code.
+  16. [WARNING]  Line -: llm_checklist Embedded C Best Practices: No buffer overflow risks - but some functions do not 
+     Fix hint: Review the failed checklist item and update the generated code.
+  17. [WARNING]  Line -: llm_checklist Code Correctness: Logic handles edge cases - some functions may not handle unexp
+     Fix hint: Review the failed checklist item and update the generated code.
+  18. [WARNING]  Line -: llm_checklist Code Correctness: Constants and limits are respected - but some magic numbers ar
+     Fix hint: Review the failed checklist item and update the generated code.
+  19. [WARNING]  Line -: llm_checklist Type Safety: No inappropriate type casting - all casts are safe and valid
+     Fix hint: Review the failed checklist item and update the generated code.
+  20. [WARNING]  Line -: llm_checklist Type Safety: Enums and defines are declared before use - all macros are defined 
+     Fix hint: Review the failed checklist item and update the generated code.
+  21. [WARNING]  Line -: llm_checklist Code Structure: Include dependencies are correct and minimal - some unnecessary 
+     Fix hint: Review the failed checklist item and update the generated code.
+  22. [WARNING]  Line -: llm_checklist Unit Test Compatibility: No hardcoded dependencies that prevent mocking - some f
+     Fix hint: Review the failed checklist item and update the generated code.
+
+[FIXES APPLIED] (1 fix(es))
+  1. Fixed 22 issue(s) from tester feedback
+     Lines changed: +8
+
+======================================================================
+
+
+[MODULE] ComStack Interface
+======================================================================
+  Files:       App_ComInterface.h, App_ComInterface.c
+  Description: Communication interface using ComStack (Com, CanIf, CanTp)
+======================================================================
+
+[PHASE 1/3] CODE GENERATION
+  Agent:   dev_agent / Ollama:qwen2.5-coder:latest
+  Status:  Running dev_agent...
+         [dev_agent] Loading module: ComStack Interface
+         [dev_agent] Finished module: ComStack Interface
+  Status:  ✓ Code generated successfully
+  Details: 108 lines, ~4053 bytes
+
+[PHASE 2/3] TESTING & VALIDATION
+  Agent:   tester_agent / Ollama:llama3
+  Purpose: Validate code quality, syntax, symbols, and functionality
+  Checks:  deterministic static checks + LLM checklist review
+           - undefined #define/typedef-like symbols
+           - placeholder/TODO text
+           - dynamic memory usage
+           - AUTOSAR/embedded C checklist
+  Status:  Running tester_agent...
+         [tester_agent] Loading module: ComStack Interface
+         [tester_agent] Finished module: ComStack Interface
+  Static:  3 deterministic issue(s)
+  LLM:     review available
+  Status:  ⚠ Issues detected - 3 problem(s) found
+
+  [ISSUES DETECTED]
+    1. [ERROR   ] Symbol CAN is used but no #define/typedef was found in generated code 
+    2. [ERROR   ] Symbol CAN_RX_ID_KEY_REQUEST is used but no #define/typedef was found 
+    3. [ERROR   ] Symbol CAN_TX_ID_KEY_REQUEST is used but no #define/typedef was found 
+
+[PHASE 3/3] FIXING & IMPROVEMENT
+  Agent:   fixer_agent / Ollama:qwen2.5-coder
+  Purpose: Fix issues and improve code quality
+  Issues:  Fixing 3 detected problem(s)
+  Status:  Running fixer_agent...
+         [fixer_agent] Loading module: ComStack Interface
+  Fix log: Passing actionable issue list to fixer_agent
+           Deterministic static findings:
+           - [ERROR] undefined_symbol: Symbol CAN is used but no #define/typedef was found in generated code or
+             Fix hint: Define CAN in the module header/config header, include the header that defines it, or re
+           - [ERROR] undefined_symbol: Symbol CAN_RX_ID_KEY_REQUEST is used but no #define/typedef was found in
+             Fix hint: Define CAN_RX_ID_KEY_REQUEST in the module header/config header, include the header that
+           - [ERROR] undefined_symbol: Symbol CAN_TX_ID_KEY_REQUEST is used but no #define/typedef was found in
+             Fix hint: Define CAN_TX_ID_KEY_REQUEST in the module header/config header, include the header that
+         [fixer_agent] Finished module: ComStack Interface
+  Status:  ✓ Fixes applied successfully
+  Details: Fixed 3 issue(s) from tester feedback
+
+[PHASE 4/4] SAVING FILES
+  Output:  C:\Working\AI-LEARNING\AI-Agent\AI_Learning\Ollama\SrcCodeProduct\App
+  Files to save:
+      [OK] App_ComInterface.h
+      [OK] App_ComInterface.c
+
+======================================================================
+[REPORT] Test Report for: ComStack Interface
+======================================================================
+
+[STAGES]
+  CODE GENERATION      [SUCCESS]             - Generated 108 lines of code
+  TESTING              [ISSUES FOUND]       
+  FIXING               [FIXES APPLIED]       - Fixed 3 issues
+
+[ERRORS FOUND] (3 issues)
+  1. [ERROR]    Line -: undefined_symbol Symbol CAN is used but no #define/typedef was found in generated code or SrcCode
+     Fix hint: Define CAN in the module header/config header, include the header that defines it, or replace it wit
+  2. [ERROR]    Line -: undefined_symbol Symbol CAN_RX_ID_KEY_REQUEST is used but no #define/typedef was found in generat
+     Fix hint: Define CAN_RX_ID_KEY_REQUEST in the module header/config header, include the header that defines it,
+  3. [ERROR]    Line -: undefined_symbol Symbol CAN_TX_ID_KEY_REQUEST is used but no #define/typedef was found in generat
+     Fix hint: Define CAN_TX_ID_KEY_REQUEST in the module header/config header, include the header that defines it,
+
+[FIXES APPLIED] (1 fix(es))
+  1. Fixed 3 issue(s) from tester feedback
+     Lines changed: -14
+
+======================================================================
+
+
+[MODULE] App Main
+======================================================================
+  Files:       App_Main.h, App_Main.c
+  Description: Application entry point and main control loop
+======================================================================
+
+[PHASE 1/3] CODE GENERATION
+  Agent:   dev_agent / Ollama:qwen2.5-coder:latest
+  Status:  Running dev_agent...
+         [dev_agent] Loading module: App Main
+         [dev_agent] Finished module: App Main
+  Status:  ✓ Code generated successfully
+  Details: 130 lines, ~3679 bytes
+
+[PHASE 2/3] TESTING & VALIDATION
+  Agent:   tester_agent / Ollama:llama3
+  Purpose: Validate code quality, syntax, symbols, and functionality
+  Checks:  deterministic static checks + LLM checklist review
+           - undefined #define/typedef-like symbols
+           - placeholder/TODO text
+           - dynamic memory usage
+           - AUTOSAR/embedded C checklist
+  Status:  Running tester_agent...
+         [tester_agent] Loading module: App Main
+         [tester_agent] Finished module: App Main
+  Static:  3 deterministic issue(s)
+  LLM:     review available
+  Status:  ⚠ Issues detected - 9 problem(s) found
+
+  [ISSUES DETECTED]
+    1. [ERROR   ] Symbol BOOT_SAFETY_SUCCESS is used but no #define/typedef was found in
+    2. [ERROR   ] Symbol KEY_COMMAND_SET_PIN is used but no #define/typedef was found in
+    3. [ERROR   ] Symbol SECURITY_COMMAND_ENABLE_FEATURES is used but no #define/typedef
+    4. [WARNING ] Embedded C Best Practices: undefined_symbol: BOOT_SAFETY_SUCCESS, KEY_
+    5. [WARNING ] Code Correctness: No checks for NULL or invalid values in KeyManager_C
+    ... and 4 more issues
+
+[PHASE 3/3] FIXING & IMPROVEMENT
+  Agent:   fixer_agent / Ollama:qwen2.5-coder
+  Purpose: Fix issues and improve code quality
+  Issues:  Fixing 9 detected problem(s)
+  Status:  Running fixer_agent...
+         [fixer_agent] Loading module: App Main
+  Fix log: Passing actionable issue list to fixer_agent
+           Deterministic static findings:
+           - [ERROR] undefined_symbol: Symbol BOOT_SAFETY_SUCCESS is used but no #define/typedef was found in g
+             Fix hint: Define BOOT_SAFETY_SUCCESS in the module header/config header, include the header that d
+           - [ERROR] undefined_symbol: Symbol KEY_COMMAND_SET_PIN is used but no #define/typedef was found in g
+             Fix hint: Define KEY_COMMAND_SET_PIN in the module header/config header, include the header that d
+           - [ERROR] undefined_symbol: Symbol SECURITY_COMMAND_ENABLE_FEATURES is used but no #define/typedef w
+             Fix hint: Define SECURITY_COMMAND_ENABLE_FEATURES in the module header/config header, include the 
+           LLM checklist failures:
+           ...
+         [fixer_agent] Finished module: App Main
+  Status:  ✓ Fixes applied successfully
+  Details: Fixed 9 issue(s) from tester feedback
+
+[PHASE 4/4] SAVING FILES
+  Output:  C:\Working\AI-LEARNING\AI-Agent\AI_Learning\Ollama\SrcCodeProduct\App
+  Files to save:
+      [OK] App_Main.h
+      [OK] App_Main.c
+
+======================================================================
+[REPORT] Test Report for: App Main
+======================================================================
+
+[STAGES]
+  CODE GENERATION      [SUCCESS]             - Generated 130 lines of code
+  TESTING              [ISSUES FOUND]       
+  FIXING               [FIXES APPLIED]       - Fixed 9 issues
+
+[ERRORS FOUND] (9 issues)
+  1. [ERROR]    Line -: undefined_symbol Symbol BOOT_SAFETY_SUCCESS is used but no #define/typedef was found in generated
+     Fix hint: Define BOOT_SAFETY_SUCCESS in the module header/config header, include the header that defines it, o
+  2. [ERROR]    Line -: undefined_symbol Symbol KEY_COMMAND_SET_PIN is used but no #define/typedef was found in generated
+     Fix hint: Define KEY_COMMAND_SET_PIN in the module header/config header, include the header that defines it, o
+  3. [ERROR]    Line -: undefined_symbol Symbol SECURITY_COMMAND_ENABLE_FEATURES is used but no #define/typedef was found
+     Fix hint: Define SECURITY_COMMAND_ENABLE_FEATURES in the module header/config header, include the header that 
+  4. [WARNING]  Line -: llm_checklist Embedded C Best Practices: undefined_symbol: BOOT_SAFETY_SUCCESS, KEY_COMMAND_SE
+     Fix hint: Review the failed checklist item and update the generated code.
+  5. [WARNING]  Line -: llm_checklist Code Correctness: No checks for NULL or invalid values in KeyManager_Create, Sec
+     Fix hint: Review the failed checklist item and update the generated code.
+  6. [WARNING]  Line -: llm_checklist Type Safety: No type checking for command processing in App_ProcessCommands
+     Fix hint: Review the failed checklist item and update the generated code.
+  7. [WARNING]  Line -: llm_checklist Code Structure: No error handling for unexpected commands in App_ProcessCommands
+     Fix hint: Review the failed checklist item and update the generated code.
+  8. [WARNING]  Line -: llm_checklist Unit Test Compatibility: Error handling and edge cases not easily testable
+     Fix hint: Review the failed checklist item and update the generated code.
+  9. [WARNING]  Line -: llm_checklist Unit Test Compatibility: Return values do not indicate success/failure clearly
+     Fix hint: Review the failed checklist item and update the generated code.
+
+[FIXES APPLIED] (1 fix(es))
+  1. Fixed 9 issue(s) from tester feedback
+     Lines changed: +9
+
+======================================================================
+
+
+[REPORTS] Test reports saved to: SrcCodeProduct\App\test_reports.json
+
+======================================================================
+[SUCCESS] App (Digital Key) generation complete!
+[OUTPUT] All files saved to: C:\Working\AI-LEARNING\AI-Agent\AI_Learning\Ollama\SrcCodeProduct\App
+[REPORTS] Detailed test reports: SrcCodeProduct\App\test_reports.json
+======================================================================
+
+
+======================================================================
+[*] PHASE 2: EMBEDDED C BUILD & AUTO-FIX
+======================================================================
+
+======================================================================
+[*] POST-GENERATION BUILD & AUTO-FIX
+======================================================================
+
+[STEP 1] COMPILATION
+----------------------------------------------------------------------
+Found 17 C source files
+
+============================================================
+LINK & BUILD SUMMARY
+============================================================
+✓ No errors or warnings!
+
+============================================================
+
+✅ BUILD SUCCESSFUL - No errors found!
+
+======================================================================
+✅ [COMPLETE] All generated code compiled successfully!
+======================================================================

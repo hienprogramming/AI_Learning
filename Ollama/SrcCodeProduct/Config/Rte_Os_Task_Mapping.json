@@ -1,0 +1,85 @@
+{
+  "project": "DigitalKey_AUTOSAR_Prototype",
+  "autosarLayering": {
+    "application": [
+      "App_Main",
+      "App_Key_Manager",
+      "App_Key_Storage",
+      "App_Security",
+      "App_ComInterface"
+    ],
+    "rte": "Rte",
+    "basicSoftware": [
+      "Com",
+      "PduR",
+      "CanIf",
+      "CanTp",
+      "Os"
+    ],
+    "bootloader": [
+      "Boot_Mcu",
+      "Boot_Jump",
+      "Boot_Update",
+      "Boot_Protocol",
+      "Boot_Safety"
+    ]
+  },
+  "osTasks": [
+    {
+      "task": "OsTask_Init",
+      "priority": 1,
+      "activation": "autostart",
+      "periodMs": 0,
+      "runnables": [
+        "Rte_Runnable_App_Init"
+      ]
+    },
+    {
+      "task": "OsTask_App_10ms",
+      "priority": 3,
+      "activation": "alarm",
+      "periodMs": 10,
+      "runnables": [
+        "Rte_Runnable_App_10ms"
+      ]
+    },
+    {
+      "task": "OsTask_App_100ms",
+      "priority": 5,
+      "activation": "alarm",
+      "periodMs": 100,
+      "runnables": [
+        "Rte_Runnable_App_100ms"
+      ]
+    },
+    {
+      "task": "OsTask_Background",
+      "priority": 10,
+      "activation": "cooperative",
+      "periodMs": 0,
+      "runnables": [
+        "Rte_Runnable_Background"
+      ]
+    }
+  ],
+  "signals": [
+    {
+      "name": "KeyRequest",
+      "rteApi": "Rte_Write_KeyRequest",
+      "comSignalId": "RTE_SIGNAL_KEY_REQUEST",
+      "direction": "App -> Com"
+    },
+    {
+      "name": "KeyResponse",
+      "rteApi": "Rte_Read_KeyResponse",
+      "comSignalId": "RTE_SIGNAL_KEY_RESPONSE",
+      "direction": "Com -> App"
+    },
+    {
+      "name": "AppStatus",
+      "rteApi": "Rte_Write_AppStatus/Rte_Read_AppStatus",
+      "comSignalId": "RTE_SIGNAL_APP_STATUS",
+      "direction": "App <-> Rte"
+    }
+  ]
+}

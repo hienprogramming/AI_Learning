@@ -4,6 +4,259 @@ import subprocess
 import sys
 import logging
 from datetime import datetime
+import platform
+import os
+import json
+
+
+class RTEConfig:
+    """Runtime Environment Configuration"""
+    def __init__(self, os_name: str, os_version: str, python_version: str, architecture: str):
+        self.os_name = os_name
+        self.os_version = os_version
+        self.python_version = python_version
+        self.architecture = architecture
+        self.shell = self._get_shell()
+        self.path_sep = os.path.sep
+        self.line_sep = os.linesep
+        
+    def _get_shell(self) -> str:
+        """Get default shell for OS"""
+        if self.os_name == "Windows":
+            return "powershell"
+        elif self.os_name == "Darwin":
+            return "zsh" if os.path.exists("/bin/zsh") else "bash"
+        else:  # Linux
+            return "bash"
+    
+    def to_dict(self) -> dict:
+        """Convert RTE config to dictionary"""
+        return {
+            "os_name": self.os_name,
+            "os_version": self.os_version,
+            "python_version": self.python_version,
+            "architecture": self.architecture,
+            "shell": self.shell,
+            "path_sep": self.path_sep,
+            "line_sep": repr(self.line_sep),
+        }
+
+
+class OSTaskMapper:
+    """Map tasks to OS-specific implementations"""
+    
+    def __init__(self, rte_config: RTEConfig):
+        self.rte = rte_config
+        self.os_type = rte_config.os_name
+        self.task_map = self._initialize_task_map()
+    
+    def _initialize_task_map(self) -> dict:
+        """Initialize OS-specific task mappings"""
+        if self.os_type == "Windows":
+            return self._get_windows_tasks()
+        elif self.os_type == "Darwin":
+            return self._get_macos_tasks()
+        else:  # Linux
+            return self._get_linux_tasks()
+    
+    def _get_windows_tasks(self) -> dict:
+        """Windows-specific task mappings"""
+        return {
+            "activate_venv": "venv\\Scripts\\Activate.ps1",
+            "python_exec": "python.exe",
+            "pip_exec": "pip.exe",
+            "shell_exec": "powershell",
+            "run_script": lambda script: f"powershell -ExecutionPolicy Bypass -File {script}",
+            "set_env": lambda key, val: f"$env:{key} = '{val}'",
+            "path_join": lambda *args: "\\".join(args),
+        }
+    
+    def _get_macos_tasks(self) -> dict:
+        """macOS-specific task mappings"""
+        return {
+            "activate_venv": "venv/bin/activate",
+            "python_exec": "python3",
+            "pip_exec": "pip3",
+            "shell_exec": "zsh",
+            "run_script": lambda script: f"bash {script}",
+            "set_env": lambda key, val: f"export {key}={val}",
+            "path_join": lambda *args: "/".join(args),
+        }
+    
+    def _get_linux_tasks(self) -> dict:
+        """Linux-specific task mappings"""
+        return {
+            "activate_venv": "venv/bin/activate",
+            "python_exec": "python3",
+            "pip_exec": "pip3",
+            "shell_exec": "bash",
+            "run_script": lambda script: f"bash {script}",
+            "set_env": lambda key, val: f"export {key}={val}",
+            "path_join": lambda *args: "/".join(args),
+        }
+    
+    def get_task(self, task_name: str):
+        """Get OS-specific task implementation"""
+        return self.task_map.get(task_name)
+    
+    def get_all_tasks(self) -> dict:
+        """Get all OS-specific task mappings"""
+        return self.task_map.copy()
+    
+    def get_activate_venv_command(self) -> str:
+        """Get virtualenv activation command"""
+        venv_path = self.get_task("activate_venv")
+        if self.os_type == "Windows":
+            return f"& {venv_path}"
+        else:
+            return f"source {venv_path}"
+
+
+def detect_rte() -> RTEConfig:
+    """Detect and configure Runtime Environment"""
+    os_name = platform.system()  # 'Windows', 'Darwin', 'Linux'
+    os_version = platform.release()
+    python_version = platform.python_version()
+    architecture = platform.machine()
+    
+    rte = RTEConfig(os_name, os_version, python_version, architecture)
+    return rte
+
+
+def setup_rte() -> tuple:
+    """Setup RTE and Task Mapper"""
+    rte = detect_rte()
+    task_mapper = OSTaskMapper(rte)
+    return rte, task_mapper
+
+
+def log_rte_info(rte: RTEConfig):
+    """Log Runtime Environment information"""
+    print("\n" + "=" * 60, flush=True)
+    print("[*] Runtime Environment Configuration", flush=True)
+    print("=" * 60, flush=True)
+    for key, value in rte.to_dict().items():
+        print(f"    {key:<18}: {value}", flush=True)
+    print("=" * 60 + "\n", flush=True)
+
+
+def log_os_tasks(task_mapper: OSTaskMapper):
+    """Log OS-specific task mappings"""
+    print("\n" + "=" * 60, flush=True)
+    print("[*] OS Task Mappings", flush=True)
+    print("=" * 60, flush=True)
+    
+    tasks = task_mapper.get_all_tasks()
+    for task_name, task_impl in tasks.items():
+        if callable(task_impl):
+            print(f"    {task_name:<20}: <callable>", flush=True)
+        else:
+            print(f"    {task_name:<20}: {task_impl}", flush=True)
+    print("=" * 60 + "\n", flush=True)
+
+
+def save_rte_config(rte: RTEConfig, output_dir: Path = None):
+    """Save RTE configuration to JSON file"""
+    if output_dir is None:
+        output_dir = Path(".")
+    
+    output_dir.mkdir(exist_ok=True)
+    config_file = output_dir / "rte_config.json"
+    
+    config_data = {
+        "timestamp": datetime.now().isoformat(),
+        "rte": rte.to_dict(),
+    }
+    
+    with open(config_file, "w", encoding="utf-8") as f:
+        json.dump(config_data, f, indent=2, ensure_ascii=False)
+    
+    print(f"[RTE] Configuration saved to: {config_file}", flush=True)
+    return config_file
+
+
+def load_autosar_rte_os_mapping(mapping_file: Path = None) -> dict:
+    """Load product AUTOSAR RTE to OS task mapping."""
+    if mapping_file is None:
+        mapping_file = Path("SrcCodeProduct") / "Config" / "Rte_Os_Task_Mapping.json"
+
+    if not mapping_file.exists():
+        return {}
+
+    with open(mapping_file, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def log_autosar_rte_os_mapping(mapping_file: Path = None):
+    """Log AUTOSAR product RTE/OS mapping if configured."""
+    mapping = load_autosar_rte_os_mapping(mapping_file)
+    if not mapping:
+        print("[WARN] AUTOSAR RTE/OS mapping file not found", flush=True)
+        return
+
+    print("\n" + "=" * 60, flush=True)
+    print("[*] AUTOSAR Product RTE -> OS Task Mapping", flush=True)
+    print("=" * 60, flush=True)
+    print(f"    Project: {mapping.get('project', 'unknown')}", flush=True)
+    print("", flush=True)
+
+    for task in mapping.get("osTasks", []):
+        runnables = ", ".join(task.get("runnables", []))
+        print(
+            f"    {task['task']:<22} "
+            f"period={str(task['periodMs']) + 'ms':<7} "
+            f"priority={task['priority']:<2} "
+            f"activation={task['activation']:<12} "
+            f"-> {runnables}",
+            flush=True,
+        )
+
+    print("=" * 60 + "\n", flush=True)
+
+
+def execute_os_task(task_mapper: OSTaskMapper, task_name: str, *args, **kwargs) -> bool:
+    """Execute OS-specific task with error handling"""
+    try:
+        task = task_mapper.get_task(task_name)
+        
+        if task is None:
+            print(f"[ERROR] Task '{task_name}' not supported on {task_mapper.os_type}", flush=True)
+            return False
+        
+        if callable(task):
+            result = task(*args, **kwargs)
+            print(f"[OK] Task '{task_name}' executed: {result}", flush=True)
+            return True
+        else:
+            print(f"[INFO] Task '{task_name}': {task}", flush=True)
+            return True
+            
+    except Exception as e:
+        print(f"[ERROR] Failed to execute task '{task_name}': {str(e)}", flush=True)
+        return False
+
+
+def run_os_command(rte: RTEConfig, command: str, shell: bool = True) -> int:
+    """Run OS-specific command using detected shell"""
+    try:
+        if rte.os_name == "Windows":
+            # Use PowerShell on Windows
+            result = subprocess.run(
+                f"powershell -Command \"{command}\"",
+                shell=True,
+                capture_output=False
+            )
+        else:
+            # Use bash/zsh on Unix-like systems
+            result = subprocess.run(
+                command,
+                shell=shell,
+                executable=rte.shell
+            )
+        return result.returncode
+    except Exception as e:
+        print(f"[ERROR] Failed to run OS command: {str(e)}", flush=True)
+        return -1
 
 
 def setup_logging():
@@ -38,6 +291,189 @@ def setup_logging():
     return log_file
 
 
+class TestReport:
+    """Track and report detailed test results, errors, and fixes"""
+    
+    def __init__(self, module_name: str, files: list):
+        self.module_name = module_name
+        self.files = files
+        self.test_results = []
+        self.errors_found = []
+        self.fixes_applied = []
+        self.code_generated = None
+        self.test_feedback = None
+        self.code_fixed = None
+        
+    def log_code_generation(self, code: str):
+        """Log generated code"""
+        self.code_generated = code
+        lines = code.count('\n')
+        self.test_results.append({
+            "stage": "CODE GENERATION",
+            "status": "SUCCESS",
+            "details": f"Generated {lines} lines of code",
+            "timestamp": datetime.now().isoformat(),
+        })
+    
+    def log_test_feedback(self, feedback: str):
+        """Log test feedback and extract errors"""
+        self.test_feedback = feedback
+        
+        # Parse feedback for errors and issues
+        self._parse_errors(feedback)
+        
+        if self.errors_found:
+            self.test_results.append({
+                "stage": "TESTING",
+                "status": "ISSUES FOUND",
+                "error_count": len(self.errors_found),
+                "timestamp": datetime.now().isoformat(),
+            })
+        else:
+            self.test_results.append({
+                "stage": "TESTING",
+                "status": "PASSED",
+                "details": "No issues found",
+                "timestamp": datetime.now().isoformat(),
+            })
+    
+    def _parse_errors(self, feedback: str):
+        """Parse and extract errors from feedback"""
+        if isinstance(feedback, dict):
+            for finding in feedback.get("static_checks", []):
+                self.errors_found.append({
+                    "line": finding.get("line", "-"),
+                    "content": finding.get("message", ""),
+                    "severity": finding.get("severity", "INFO"),
+                    "check": finding.get("check", "static_check"),
+                    "fix_hint": finding.get("fix_hint", ""),
+                })
+
+            llm_review = feedback.get("llm_review", {})
+            if isinstance(llm_review, dict):
+                for category, result in llm_review.items():
+                    if category == "summary" or not isinstance(result, dict):
+                        continue
+                    for failed in result.get("failed", []):
+                        self.errors_found.append({
+                            "line": "-",
+                            "content": f"{category}: {failed}",
+                            "severity": "WARNING",
+                            "check": "llm_checklist",
+                            "fix_hint": "Review the failed checklist item and update the generated code.",
+                        })
+
+            if feedback.get("error"):
+                self.errors_found.append({
+                    "line": "-",
+                    "content": f"tester_agent response parse error: {feedback['error']}",
+                    "severity": "WARNING",
+                    "check": "tester_agent",
+                    "fix_hint": "Check the raw LLM response in test_reports.json.",
+                })
+            return
+
+        # Look for common error patterns
+        error_keywords = [
+            "error", "failed", "issue", "problem", "warning",
+            "bug", "invalid", "missing", "undefined", "syntax"
+        ]
+        
+        lines = feedback.split('\n')
+        for i, line in enumerate(lines):
+            line_lower = line.lower()
+            if any(keyword in line_lower for keyword in error_keywords):
+                self.errors_found.append({
+                    "line": i + 1,
+                    "content": line.strip(),
+                    "severity": self._classify_error_severity(line),
+                })
+    
+    def _classify_error_severity(self, line: str) -> str:
+        """Classify error severity"""
+        line_lower = line.lower()
+        if "critical" in line_lower or "fatal" in line_lower:
+            return "CRITICAL"
+        elif "error" in line_lower:
+            return "ERROR"
+        elif "warning" in line_lower:
+            return "WARNING"
+        else:
+            return "INFO"
+    
+    def log_fix_applied(self, fixed_code: str, fix_description: str = None):
+        """Log fixes applied"""
+        self.code_fixed = fixed_code
+        
+        # Calculate diff
+        if self.code_generated:
+            added_lines = fixed_code.count('\n') - self.code_generated.count('\n')
+        else:
+            added_lines = fixed_code.count('\n')
+        
+        self.fixes_applied.append({
+            "description": fix_description or "Fixes applied by fixer_agent",
+            "lines_changed": added_lines,
+            "timestamp": datetime.now().isoformat(),
+        })
+        
+        self.test_results.append({
+            "stage": "FIXING",
+            "status": "FIXES APPLIED",
+            "details": f"Fixed {len(self.errors_found)} issues",
+            "timestamp": datetime.now().isoformat(),
+        })
+    
+    def to_dict(self) -> dict:
+        """Convert report to dictionary"""
+        return {
+            "module": self.module_name,
+            "files": self.files,
+            "test_results": self.test_results,
+            "errors_found": self.errors_found,
+            "test_feedback": self.test_feedback,
+            "fixes_applied": self.fixes_applied,
+            "summary": {
+                "total_stages": len(self.test_results),
+                "issues_found": len(self.errors_found),
+                "fixes_applied": len(self.fixes_applied),
+            }
+        }
+    
+    def print_report(self):
+        """Print detailed test report"""
+        print(f"\n{'='*70}", flush=True)
+        print(f"[REPORT] Test Report for: {self.module_name}", flush=True)
+        print(f"{'='*70}", flush=True)
+        
+        # Print test stages
+        print(f"\n[STAGES]", flush=True)
+        for stage in self.test_results:
+            status_str = f"[{stage['status']}]" if stage['status'] else ""
+            details_str = f" - {stage.get('details', '')}" if stage.get('details') else ""
+            print(f"  {stage['stage']:<20} {status_str:<20} {details_str}", flush=True)
+        
+        # Print errors found
+        if self.errors_found:
+            print(f"\n[ERRORS FOUND] ({len(self.errors_found)} issues)", flush=True)
+            for i, error in enumerate(self.errors_found, 1):
+                severity = f"[{error['severity']}]"
+                check = f" {error.get('check', '')}" if error.get("check") else ""
+                print(f"  {i}. {severity:<10} Line {error['line']}:{check} {error['content'][:80]}", flush=True)
+                if error.get("fix_hint"):
+                    print(f"     Fix hint: {error['fix_hint'][:100]}", flush=True)
+        
+        # Print fixes applied
+        if self.fixes_applied:
+            print(f"\n[FIXES APPLIED] ({len(self.fixes_applied)} fix(es))", flush=True)
+            for i, fix in enumerate(self.fixes_applied, 1):
+                print(f"  {i}. {fix['description']}", flush=True)
+                if fix['lines_changed'] != 0:
+                    print(f"     Lines changed: {fix['lines_changed']:+d}", flush=True)
+        
+        print(f"\n{'='*70}\n", flush=True)
+
+
 class OutputCapture:
     """Capture print output to both console and file"""
     def __init__(self, log_file):
@@ -54,12 +490,34 @@ class OutputCapture:
             self.file.close()
     
     def write(self, text):
-        self.original_stdout.write(text)
+        # Write to original stdout, gracefully handling encoding issues
+        try:
+            self.original_stdout.write(text)
+        except UnicodeEncodeError:
+            enc = getattr(self.original_stdout, "encoding", None) or "utf-8"
+            safe_text = text.encode(enc, errors="replace").decode(enc, errors="replace")
+            self.original_stdout.write(safe_text)
+
         if self.file:
-            self.file.write(text)
-        self.original_stdout.flush()
+            # File is opened with utf-8 encoding; write directly
+            try:
+                self.file.write(text)
+            except Exception:
+                # Fallback: write a safe replacement version
+                enc = getattr(self.file, "encoding", None) or "utf-8"
+                safe_text = text.encode(enc, errors="replace").decode(enc, errors="replace")
+                self.file.write(safe_text)
+
+        try:
+            self.original_stdout.flush()
+        except Exception:
+            pass
+
         if self.file:
-            self.file.flush()
+            try:
+                self.file.flush()
+            except Exception:
+                pass
     
     def flush(self):
         self.original_stdout.flush()
@@ -94,6 +552,44 @@ def save_file(output_dir: Path, filename: str, content: str):
 
 def log_agent(agent_name: str, module_name: str, message: str):
     print(f"         [{agent_name}] {message}: {module_name}", flush=True)
+
+
+def format_feedback_for_fixer(feedback) -> str:
+    """Build a compact, actionable issue list for fixer_agent."""
+    if not isinstance(feedback, dict):
+        return str(feedback)
+
+    lines = []
+    static_checks = feedback.get("static_checks", [])
+    if static_checks:
+        lines.append("Deterministic static findings:")
+        for finding in static_checks:
+            location = f" line {finding['line']}" if finding.get("line") else ""
+            lines.append(
+                f"- [{finding.get('severity', 'INFO')}] {finding.get('check', 'check')}{location}: "
+                f"{finding.get('message', '')}"
+            )
+            if finding.get("fix_hint"):
+                lines.append(f"  Fix hint: {finding['fix_hint']}")
+
+    llm_review = feedback.get("llm_review", {})
+    if isinstance(llm_review, dict):
+        failed_items = []
+        for category, result in llm_review.items():
+            if category == "summary" or not isinstance(result, dict):
+                continue
+            for failed in result.get("failed", []):
+                failed_items.append(f"- {category}: {failed}")
+        if failed_items:
+            lines.append("LLM checklist failures:")
+            lines.extend(failed_items)
+
+    if feedback.get("error"):
+        lines.append(f"Tester response issue: {feedback['error']}")
+        if feedback.get("raw"):
+            lines.append(f"Raw tester response: {feedback['raw'][:1000]}")
+
+    return "\n".join(lines) if lines else json.dumps(feedback, indent=2, ensure_ascii=False)
 
 
 def print_agent_plan(modules, agents):
@@ -286,49 +782,238 @@ def setup_app_modules():
 
 
 def generate_modules(project_name: str, output_dir: Path, project_context: str, modules: list, agents: dict):
-    """Generate code for all modules in a project"""
+    """Generate code for all modules in a project with detailed logging"""
     import dev_agent
     import fixer_agent
     import tester_agent
 
-    print("\n" + "=" * 60)
-    print(f"[*] {project_name} Code Generation")
-    print("=" * 60)
+    print("\n" + "=" * 70)
+    print(f"[*] {project_name} Code Generation with Detailed Logging")
+    print("=" * 70)
     print_agent_plan(modules, agents)
 
+    # List to track all test reports
+    all_reports = []
+
     for module_info in modules:
-        print(f"\n[MODULE] Generating: {module_info['name']}")
-        print(f"         Files: {', '.join(module_info['files'])}")
-        print(f"         Desc: {module_info['desc']}")
+        print(f"\n[MODULE] {module_info['name']}")
+        print(f"{'='*70}")
+        print(f"  Files:       {', '.join(module_info['files'])}")
+        print(f"  Description: {module_info['desc']}")
+        print(f"{'='*70}")
         
-        # Generate code for this module
-        log_agent("dev_agent", module_info["name"], "Loading module")
-        code = dev_agent.run(project_context + module_info['req'])
-        log_agent("dev_agent", module_info["name"], "Finished module")
-        print("         [OK] Code generated", flush=True)
+        # Create test report for this module
+        report = TestReport(module_info["name"], module_info['files'])
+        
+        # ========== CODE GENERATION PHASE ==========
+        print(f"\n[PHASE 1/3] CODE GENERATION", flush=True)
+        print(f"  Agent:   {agents['dev']}", flush=True)
+        print(f"  Status:  Running dev_agent...", flush=True)
+        
+        try:
+            log_agent("dev_agent", module_info["name"], "Loading module")
+            code = dev_agent.run(project_context + module_info['req'])
+            log_agent("dev_agent", module_info["name"], "Finished module")
+            
+            report.log_code_generation(code)
+            print(f"  Status:  ✓ Code generated successfully", flush=True)
+            print(f"  Details: {code.count(chr(10))} lines, ~{len(code)} bytes", flush=True)
+        except Exception as e:
+            print(f"  Status:  ✗ FAILED - {str(e)}", flush=True)
+            continue
 
-        # Test the generated code
-        log_agent("tester_agent", module_info["name"], "Loading module")
-        feedback = tester_agent.run(code)
-        log_agent("tester_agent", module_info["name"], "Finished module")
-        print("         [OK] Testing completed", flush=True)
+        # ========== TESTING PHASE ==========
+        print(f"\n[PHASE 2/3] TESTING & VALIDATION", flush=True)
+        print(f"  Agent:   {agents['test']}", flush=True)
+        print(f"  Purpose: Validate code quality, syntax, symbols, and functionality", flush=True)
+        print(f"  Checks:  deterministic static checks + LLM checklist review", flush=True)
+        print(f"           - undefined #define/typedef-like symbols", flush=True)
+        print(f"           - placeholder/TODO text", flush=True)
+        print(f"           - dynamic memory usage", flush=True)
+        print(f"           - AUTOSAR/embedded C checklist", flush=True)
+        print(f"  Status:  Running tester_agent...", flush=True)
+        
+        try:
+            log_agent("tester_agent", module_info["name"], "Loading module")
+            feedback = tester_agent.run(code)
+            log_agent("tester_agent", module_info["name"], "Finished module")
+            
+            report.log_test_feedback(feedback)
+            if isinstance(feedback, dict):
+                summary = feedback.get("summary", {})
+                print(
+                    f"  Static:  {summary.get('static_issue_count', 0)} deterministic issue(s)",
+                    flush=True,
+                )
+                print(
+                    f"  LLM:     review {'available' if summary.get('llm_review_available') else 'unavailable/parse failed'}",
+                    flush=True,
+                )
+            
+            if report.errors_found:
+                print(f"  Status:  ⚠ Issues detected - {len(report.errors_found)} problem(s) found", flush=True)
+                print(f"\n  [ISSUES DETECTED]", flush=True)
+                for i, error in enumerate(report.errors_found[:5], 1):  # Show first 5
+                    severity = error['severity']
+                    content = error['content'][:70]
+                    print(f"    {i}. [{severity:8s}] {content}", flush=True)
+                if len(report.errors_found) > 5:
+                    print(f"    ... and {len(report.errors_found) - 5} more issues", flush=True)
+            else:
+                print(f"  Status:  ✓ All tests passed", flush=True)
+                print(f"  Details: No issues detected", flush=True)
+        except Exception as e:
+            print(f"  Status:  ✗ Test FAILED - {str(e)}", flush=True)
+            continue
 
-        # Fix any issues
-        log_agent("fixer_agent", module_info["name"], "Loading module")
-        fixed = fixer_agent.run(code, feedback)
-        log_agent("fixer_agent", module_info["name"], "Finished module")
-        print("         [OK] Fixes applied", flush=True)
+        # ========== FIXING PHASE ==========
+        if report.errors_found:
+            print(f"\n[PHASE 3/3] FIXING & IMPROVEMENT", flush=True)
+            print(f"  Agent:   {agents['fix']}", flush=True)
+            print(f"  Purpose: Fix issues and improve code quality", flush=True)
+            print(f"  Issues:  Fixing {len(report.errors_found)} detected problem(s)", flush=True)
+            print(f"  Status:  Running fixer_agent...", flush=True)
+            
+            try:
+                log_agent("fixer_agent", module_info["name"], "Loading module")
+                fix_input = format_feedback_for_fixer(feedback)
+                print(f"  Fix log: Passing actionable issue list to fixer_agent", flush=True)
+                for line in fix_input.splitlines()[:8]:
+                    print(f"           {line[:100]}", flush=True)
+                if len(fix_input.splitlines()) > 8:
+                    print(f"           ...", flush=True)
+                fixed = fixer_agent.run(code, fix_input)
+                log_agent("fixer_agent", module_info["name"], "Finished module")
+                
+                fix_description = f"Fixed {len(report.errors_found)} issue(s) from tester feedback"
+                report.log_fix_applied(fixed, fix_description)
+                
+                print(f"  Status:  ✓ Fixes applied successfully", flush=True)
+                print(f"  Details: {fix_description}", flush=True)
+                
+                code = fixed  # Use fixed code for saving
+            except Exception as e:
+                print(f"  Status:  ✗ Fixing FAILED - {str(e)}", flush=True)
+                print(f"  Fallback: Using original generated code", flush=True)
+        else:
+            print(f"\n[PHASE 3/3] No fixes needed - code quality is good ✓", flush=True)
 
-        # Save generated files
-        print("         Saving files:")
+        # ========== SAVING FILES ==========
+        print(f"\n[PHASE 4/4] SAVING FILES", flush=True)
+        print(f"  Output:  {output_dir.absolute()}", flush=True)
+        
+        print(f"  Files to save:", flush=True)
         for filename in module_info['files']:
-            content = extract_code(fixed, file_marker=filename)
-            save_file(output_dir, filename, content)
+            try:
+                content = extract_code(code, file_marker=filename)
+                save_file(output_dir, filename, content)
+            except Exception as e:
+                print(f"      ✗ {filename} - FAILED: {str(e)}", flush=True)
 
-    print("\n" + "=" * 60)
+        # Print detailed test report
+        report.print_report()
+        all_reports.append(report)
+
+    # Save all reports to JSON
+    save_detailed_reports(all_reports, output_dir / "test_reports.json")
+
+    print("\n" + "=" * 70)
     print(f"[SUCCESS] {project_name} generation complete!")
     print(f"[OUTPUT] All files saved to: {output_dir.absolute()}")
-    print("=" * 60)
+    print(f"[REPORTS] Detailed test reports: {output_dir / 'test_reports.json'}")
+    print("=" * 70)
+
+
+def save_detailed_reports(reports: list, output_file: Path):
+    """Save all test reports to JSON file"""
+    try:
+        output_file.parent.mkdir(parents=True, exist_ok=True)
+        
+        reports_data = {
+            "generated_at": datetime.now().isoformat(),
+            "total_modules": len(reports),
+            "modules": [report.to_dict() for report in reports],
+        }
+        
+        with open(output_file, "w", encoding="utf-8") as f:
+            json.dump(reports_data, f, indent=2, ensure_ascii=False)
+        
+        print(f"\n[REPORTS] Test reports saved to: {output_file}", flush=True)
+    except Exception as e:
+        print(f"\n[ERROR] Failed to save test reports: {str(e)}", flush=True)
+
+
+def run_post_generation_build():
+    """Auto-compile and fix generated embedded C code"""
+    print("\n" + "=" * 70, flush=True)
+    print("[*] POST-GENERATION BUILD & AUTO-FIX", flush=True)
+    print("=" * 70, flush=True)
+    
+    try:
+        from compile_manager import CompileManager
+        from error_fixer import ErrorFixer
+        
+        print("\n[STEP 1] COMPILATION", flush=True)
+        print("-" * 70, flush=True)
+        
+        manager = CompileManager()
+        c_files = manager.get_all_c_files()
+        print(f"Found {len(c_files)} C source files", flush=True)
+        
+        success, output = manager.compile_check()
+        manager.print_summary()
+        
+        # Check if there are actual errors
+        has_errors = len(manager.errors) > 0
+        
+        if not has_errors:
+            print(f"\n✅ BUILD SUCCESSFUL - No errors found!", flush=True)
+            return True
+        
+        print(f"\n⚠️  COMPILATION ISSUES DETECTED", flush=True)
+        print(f"Errors: {len(manager.errors)}", flush=True)
+        print(f"Warnings: {len(manager.warnings)}", flush=True)
+        
+        # Generate error report
+        report_file = manager.generate_error_report()
+        print(f"\n📋 Error report: {report_file}", flush=True)
+        
+        # Try to auto-fix
+        print("\n[STEP 2] AUTO-FIX", flush=True)
+        print("-" * 70, flush=True)
+        
+        fixer = ErrorFixer()
+        
+        if not fixer.ai_provider:
+            print("\n⚠️  AI provider not available for auto-fixing", flush=True)
+            print("    - Set GOOGLE_API_KEY for Gemini")
+            print("    - Or ensure Ollama is running")
+            print(f"\n    Review error report: {report_file}", flush=True)
+            return False
+        
+        print(f"Using AI Provider: {fixer.ai_provider}", flush=True)
+        print(f"Attempting to fix {len(manager.errors)} error(s)...", flush=True)
+        
+        fix_success = fixer.fix_compilation_errors(max_iterations=3)
+        
+        if fix_success:
+            print(f"\n✅ ALL ERRORS FIXED!", flush=True)
+            print(f"   Fixed {len(fixer.fixed_errors)} error(s)", flush=True)
+            return True
+        else:
+            print(f"\n⚠️  Some errors could not be auto-fixed", flush=True)
+            print(f"   Fixed: {len(fixer.fixed_errors)}")
+            print(f"   Remaining: {len(fixer.compile_manager.errors)}")
+            print(f"\n   Review and fix manually: {report_file}", flush=True)
+            return False
+    
+    except Exception as e:
+        print(f"\n❌ ERROR during build/fix: {str(e)}", flush=True)
+        import traceback
+        traceback.print_exc()
+        return False
+
+
 
 
 def main():
@@ -338,10 +1023,21 @@ def main():
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     log_file = logs_dir / f"run_main_{timestamp}.txt"
     
+    # Setup RTE
+    rte, task_mapper = setup_rte()
+    
     # Redirect stdout to capture both console and file
     with OutputCapture(log_file) as output:
         sys.stdout = output
         try:
+            # Log RTE and OS task information
+            log_rte_info(rte)
+            log_os_tasks(task_mapper)
+            
+            # Save RTE configuration
+            save_rte_config(rte, logs_dir)
+            log_autosar_rte_os_mapping()
+            
             # Run environment check first
             print("[*] Running environment check...\n", flush=True)
             result = subprocess.run([sys.executable, "check_environment.py"])
@@ -368,6 +1064,11 @@ def main():
                 "fix": f"fixer_agent / Ollama:{fixer_agent.MODEL}",
             }
 
+            # ========== CODE GENERATION PHASE ==========
+            print("\n\n" + "=" * 70, flush=True)
+            print("[*] PHASE 1: CODE GENERATION & TESTING", flush=True)
+            print("=" * 70, flush=True)
+            
             # Generate Bootloader
             output_dir, project_context, modules = setup_bootloader_modules()
             generate_modules("Bootloader", output_dir, project_context, modules, agents)
@@ -376,9 +1077,18 @@ def main():
             output_dir, project_context, modules = setup_app_modules()
             generate_modules("App (Digital Key)", output_dir, project_context, modules, agents)
 
-            print("\n" + "=" * 60)
-            print("[SUCCESS] All projects generation complete!")
-            print("=" * 60)
+            # ========== AUTO-COMPILE & AUTO-FIX PHASE ==========
+            print("\n\n" + "=" * 70, flush=True)
+            print("[*] PHASE 2: EMBEDDED C BUILD & AUTO-FIX", flush=True)
+            print("=" * 70, flush=True)
+            build_success = run_post_generation_build()
+
+            print("\n" + "=" * 70, flush=True)
+            if build_success:
+                print("✅ [COMPLETE] All generated code compiled successfully!")
+            else:
+                print("⚠️  [ATTENTION] Some build issues remain - review the error report above")
+            print("=" * 70)
         finally:
             sys.stdout = output.original_stdout
 

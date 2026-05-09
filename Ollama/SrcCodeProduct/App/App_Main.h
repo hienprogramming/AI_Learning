@@ -1,11 +1,21 @@
-#ifndef APP_MAIN_H
-#define APP_MAIN_H
+#ifndef APP_MAIN_H_
+#define APP_MAIN_H_
 
-#include "Std_Types.h"
+// Include project-specific headers
+#include "ProjectConfig.h"
+#include "Boot_Safety.h"
 
-void App_Init(void);
-Std_ReturnType App_Run(void);
-void App_ProcessCommands(void);
+// Define subsystem pointers (static allocation)
+typedef struct {
+    KeyManager *KeyMgr;
+    Security *SecurityMgr;
+    ComInterface *ComIntf;
+} AppSubsystem;
+
+// Function prototypes
+void App_Init(AppSubsystem *subsys);
+void App_Run(AppSubsystem *subsys);
+void App_ProcessCommands(AppSubsystem *subsys);
 void App_HandleError(uint32_t error_code);
 
-#endif // APP_MAIN_H
+#endif // APP_MAIN_H_

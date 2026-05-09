@@ -1,0 +1,944 @@
+{
+  "generated_at": "2026-05-09T19:17:48.950047",
+  "total_modules": 5,
+  "modules": [
+    {
+      "module": "MCU Base",
+      "files": [
+        "Boot_Mcu.h",
+        "Boot_Mcu.c"
+      ],
+      "test_results": [
+        {
+          "stage": "CODE GENERATION",
+          "status": "SUCCESS",
+          "details": "Generated 141 lines of code",
+          "timestamp": "2026-05-09T18:31:52.767656"
+        },
+        {
+          "stage": "TESTING",
+          "status": "ISSUES FOUND",
+          "error_count": 15,
+          "timestamp": "2026-05-09T18:36:27.713400"
+        },
+        {
+          "stage": "FIXING",
+          "status": "FIXES APPLIED",
+          "details": "Fixed 15 issues",
+          "timestamp": "2026-05-09T18:41:45.142838"
+        }
+      ],
+      "errors_found": [
+        {
+          "line": "-",
+          "content": "Symbol FLASH is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define FLASH in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol FLASH_CR_LOCK is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define FLASH_CR_LOCK in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol FLASH_CR_PER is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define FLASH_CR_PER in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol FLASH_CR_PG is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define FLASH_CR_PG in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol FLASH_CR_STRT is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define FLASH_CR_STRT in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol FLASH_SR_BSY is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define FLASH_SR_BSY in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol FLASH_SR_EOP is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define FLASH_SR_EOP in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol FLASH_SR_PGERR is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define FLASH_SR_PGERR in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol STM32F103C8T6 is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define STM32F103C8T6 in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "category_name: AUTOSAR Compliance: Function/variable names use the correct module prefix",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "category_name: Embedded C Best Practices: No undefined behavior",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "category_name: Code Correctness: Code matches the requirement",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "category_name: Type Safety: Data sizes match values and buffer lengths",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "category_name: Unit Test Compatibility: Functions are testable in isolation",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "category_name: Unit Test Compatibility: No hardcoded dependencies that prevent mocking",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        }
+      ],
+      "test_feedback": {
+        "static_checks": [
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol FLASH is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define FLASH in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol FLASH_CR_LOCK is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define FLASH_CR_LOCK in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol FLASH_CR_PER is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define FLASH_CR_PER in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol FLASH_CR_PG is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define FLASH_CR_PG in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol FLASH_CR_STRT is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define FLASH_CR_STRT in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol FLASH_SR_BSY is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define FLASH_SR_BSY in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol FLASH_SR_EOP is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define FLASH_SR_EOP in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol FLASH_SR_PGERR is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define FLASH_SR_PGERR in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol STM32F103C8T6 is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define STM32F103C8T6 in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          }
+        ],
+        "llm_review": {
+          "category_name": {
+            "passed": [
+              "AUTOSAR Compliance: Naming conventions follow AUTOSAR style",
+              "Embedded C Best Practices: No malloc/dynamic memory allocation",
+              "Type Safety: Project typedefs are used correctly",
+              "Code Structure: Header guards are present in .h files",
+              "Unit Test Compatibility: Functions have single responsibility"
+            ],
+            "failed": [
+              "AUTOSAR Compliance: Function/variable names use the correct module prefix",
+              "Embedded C Best Practices: No undefined behavior",
+              "Code Correctness: Code matches the requirement",
+              "Type Safety: Data sizes match values and buffer lengths",
+              "Unit Test Compatibility: Functions are testable in isolation",
+              "Unit Test Compatibility: No hardcoded dependencies that prevent mocking"
+            ],
+            "score": "3/10"
+          },
+          "summary": {
+            "total_checks": 15,
+            "passed": 6,
+            "failed": 9,
+            "pass_rate": "40%"
+          }
+        },
+        "summary": {
+          "static_issue_count": 9,
+          "llm_review_available": true
+        }
+      },
+      "fixes_applied": [
+        {
+          "description": "Fixed 15 issue(s) from tester feedback",
+          "lines_changed": 8,
+          "timestamp": "2026-05-09T18:41:45.142838"
+        }
+      ],
+      "summary": {
+        "total_stages": 3,
+        "issues_found": 15,
+        "fixes_applied": 1
+      }
+    },
+    {
+      "module": "Boot Jump",
+      "files": [
+        "Boot_Jump.h",
+        "Boot_Jump.c"
+      ],
+      "test_results": [
+        {
+          "stage": "CODE GENERATION",
+          "status": "SUCCESS",
+          "details": "Generated 110 lines of code",
+          "timestamp": "2026-05-09T18:43:27.517837"
+        },
+        {
+          "stage": "TESTING",
+          "status": "ISSUES FOUND",
+          "error_count": 6,
+          "timestamp": "2026-05-09T18:46:16.390513"
+        },
+        {
+          "stage": "FIXING",
+          "status": "FIXES APPLIED",
+          "details": "Fixed 6 issues",
+          "timestamp": "2026-05-09T18:49:27.261589"
+        }
+      ],
+      "errors_found": [
+        {
+          "line": "-",
+          "content": "Symbol MSP is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define MSP in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol MSR is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define MSR in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol RAM is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define RAM in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol STM32F103C8T6 is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define STM32F103C8T6 in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": 1,
+          "content": "Placeholder/incomplete implementation text remains: Sure, I can help you create a bootloader for the STM32F103C8T6 microcontroller. Below are the files `Boot_Jump.h` and `Boot_Jump.c` that implement the required functionality.",
+          "severity": "WARNING",
+          "check": "placeholder_code",
+          "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+        },
+        {
+          "line": "-",
+          "content": "tester_agent response parse error: Failed to parse JSON response",
+          "severity": "WARNING",
+          "check": "tester_agent",
+          "fix_hint": "Check the raw LLM response in test_reports.json."
+        }
+      ],
+      "test_feedback": {
+        "static_checks": [
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol MSP is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define MSP in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol MSR is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define MSR in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol RAM is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define RAM in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol STM32F103C8T6 is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define STM32F103C8T6 in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "WARNING",
+            "check": "placeholder_code",
+            "line": 1,
+            "message": "Placeholder/incomplete implementation text remains: Sure, I can help you create a bootloader for the STM32F103C8T6 microcontroller. Below are the files `Boot_Jump.h` and `Boot_Jump.c` that implement the required functionality.",
+            "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+          }
+        ],
+        "error": "Failed to parse JSON response",
+        "raw": "{\n\"category_name\": \"AUTOSAR Compliance\",\n\"passed\": [\"Naming conventions follow AUTOSAR style\", \"Function/variable names use the correct module prefix\"],\n\"failed\": [\"Return types follow AUTOSAR/project conventions - No return type specified for `Boot_IsApplicationValid` and `Boot_JumpToApplication`\"]\n\"score\": \"2/3\"\n},\n\n{\n\"category_name\": \"Embedded C Best Practices\",\n\"passed\": [\"No malloc/dynamic memory allocation\", \"All variables are initialized before use\", \"No buffer overflow risks\"],\n\"failed\": [\"No undefined behavior - Use of unitialized pointer `pApplicationStack` and `pApplicationResetVector` in `Boot_JumpToApplication`\"]\n\"score\": \"3/4\"\n},\n\n{\n\"category_name\": \"Code Correctness\",\n\"passed\": [\"Code matches the requirement\", \"Logic handles edge cases\"],\n\"failed\": [\"Constants and limits are respected - No checks for valid stack pointer or reset vector values\", \"No dead code or unreachable statements\"]\n\"score\": \"2/3\"\n},\n\n{\n\"category_name\": \"Type Safety\",\n\"passed\": [\"Project typedefs are used correctly\", \"Enums and defines are declared before use\"],\n\"failed\": [\"No inappropriate type casting - Casting `uint32_t*` to `(ApplicationResetHandler)` in `Boot_JumpToApplication`\"]\n\"score\": \"2/3\"\n},\n\n{\n\"category_name\": \"Code Structure\",\n\"passed\": [\"Header guards are present\", \"Declarations and implementations are separated\"],\n\"failed\": [\"Include dependencies are correct and minimal - Use of unnecessary header `stdint.h` in `Boot_Jump.c`\"]\n\"score\": \"2/3\"\n},\n\n{\n\"category_name\": \"Unit Test Compatibility\",\n\"passed\": [\"Functions are testable in isolation\", \"Functions have single responsibility\"],\n\"failed\": [\"No hardcoded dependencies that prevent mocking - Hardcoded values for stack pointer and reset vector\", \"Error handling and edge cases are testable - No checks for invalid application scenarios\"]\n\"score\": \"2/4\"\n},\n\n{\n\"summary\": {\n\"total_checks\": 15,\n\"passed\": 9,\n\"failed\": 6,\n\"pass_rate\": \"60%\"\n}\n}",
+        "summary": {
+          "static_issue_count": 5,
+          "llm_review_available": false
+        }
+      },
+      "fixes_applied": [
+        {
+          "description": "Fixed 6 issue(s) from tester feedback",
+          "lines_changed": 4,
+          "timestamp": "2026-05-09T18:49:27.261589"
+        }
+      ],
+      "summary": {
+        "total_stages": 3,
+        "issues_found": 6,
+        "fixes_applied": 1
+      }
+    },
+    {
+      "module": "Firmware Update",
+      "files": [
+        "Boot_Update.h",
+        "Boot_Update.c"
+      ],
+      "test_results": [
+        {
+          "stage": "CODE GENERATION",
+          "status": "SUCCESS",
+          "details": "Generated 178 lines of code",
+          "timestamp": "2026-05-09T18:52:11.798346"
+        },
+        {
+          "stage": "TESTING",
+          "status": "ISSUES FOUND",
+          "error_count": 20,
+          "timestamp": "2026-05-09T18:57:54.010130"
+        },
+        {
+          "stage": "FIXING",
+          "status": "FIXES APPLIED",
+          "details": "Fixed 20 issues",
+          "timestamp": "2026-05-09T19:01:08.334661"
+        }
+      ],
+      "errors_found": [
+        {
+          "line": "-",
+          "content": "Symbol CRC is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define CRC in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol FLASH is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define FLASH in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol FLASH_SECTOR_7 is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define FLASH_SECTOR_7 in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol FLASH_TYPEERASE_SECTORS is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define FLASH_TYPEERASE_SECTORS in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol FLASH_TYPEPROGRAM_WORD is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define FLASH_TYPEPROGRAM_WORD in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol FLASH_VOLTAGE_RANGE_3 is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define FLASH_VOLTAGE_RANGE_3 in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol HAL is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define HAL in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol HAL_MAX_DELAY is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define HAL_MAX_DELAY in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol HAL_OK is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define HAL_OK in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol SCB is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define SCB in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol UART is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define UART in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol UART_HWCONTROL_NONE is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define UART_HWCONTROL_NONE in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol UART_MODE_TX_RX is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define UART_MODE_TX_RX in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol UART_OVERSAMPLING_16 is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define UART_OVERSAMPLING_16 in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol UART_PARITY_NONE is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define UART_PARITY_NONE in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol UART_STOPBITS_1 is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define UART_STOPBITS_1 in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol UART_WORDLENGTH_8B is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define UART_WORDLENGTH_8B in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol USART1 is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define USART1 in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol VTOR is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define VTOR in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "tester_agent response parse error: Failed to parse JSON response",
+          "severity": "WARNING",
+          "check": "tester_agent",
+          "fix_hint": "Check the raw LLM response in test_reports.json."
+        }
+      ],
+      "test_feedback": {
+        "static_checks": [
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol CRC is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define CRC in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol FLASH is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define FLASH in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol FLASH_SECTOR_7 is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define FLASH_SECTOR_7 in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol FLASH_TYPEERASE_SECTORS is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define FLASH_TYPEERASE_SECTORS in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol FLASH_TYPEPROGRAM_WORD is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define FLASH_TYPEPROGRAM_WORD in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol FLASH_VOLTAGE_RANGE_3 is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define FLASH_VOLTAGE_RANGE_3 in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol HAL is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define HAL in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol HAL_MAX_DELAY is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define HAL_MAX_DELAY in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol HAL_OK is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define HAL_OK in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol SCB is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define SCB in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol UART is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define UART in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol UART_HWCONTROL_NONE is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define UART_HWCONTROL_NONE in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol UART_MODE_TX_RX is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define UART_MODE_TX_RX in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol UART_OVERSAMPLING_16 is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define UART_OVERSAMPLING_16 in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol UART_PARITY_NONE is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define UART_PARITY_NONE in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol UART_STOPBITS_1 is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define UART_STOPBITS_1 in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol UART_WORDLENGTH_8B is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define UART_WORDLENGTH_8B in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol USART1 is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define USART1 in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol VTOR is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define VTOR in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          }
+        ],
+        "error": "Failed to parse JSON response",
+        "raw": "Here is the review result in JSON format:\n\n```\n{\n  \"category_name\": {\n    \"AUTOSAR Compliance\": {\n      \"passed\": [\"Naming conventions follow AUTOSAR style\"],\n      \"failed\": [\n        \"Undefined symbol CRC\",\n        \"Undefined symbol FLASH\",\n        ...\n      ],\n      \"score\": \"5/14\"\n    },\n    \"Embedded C Best Practices\": {\n      \"passed\": [\"No malloc/dynamic memory allocation\", \"All variables are initialized before use\"],\n      \"failed\": [\n        \"No undefined behavior\",\n        \"No buffer overflow risks\",\n        ...\n      ],\n      \"score\": \"2/6\"\n    },\n    \"Code Correctness\": {\n      \"passed\": [\"Code matches the requirement\"],\n      \"failed\": [\n        \"Logic does not handle edge cases\",\n        \"Constants and limits are not respected\",\n        ...\n      ],\n      \"score\": \"1/3\"\n    },\n    \"Type Safety\": {\n      \"passed\": [\"Project typedefs are used correctly\"],\n      \"failed\": [\n        \"No inappropriate type casting\",\n        \"Enums and defines are declared before use\",\n        ...\n      ],\n      \"score\": \"2/4\"\n    },\n    \"Code Structure\": {\n      \"passed\": [\"Header guards are present in .h files\", \"Declarations and implementations are separated\"],\n      \"failed\": [\n        \"Include dependencies are not correct and minimal\",\n        \"No circular includes\",\n        ...\n      ],\n      \"score\": \"2/4\"\n    },\n    \"Unit Test Compatibility\": {\n      \"passed\": [\"Functions are testable in isolation\"],\n      \"failed\": [\n        \"Functions have multiple responsibilities\",\n        \"Error handling and edge cases are not testable\",\n        ...\n      ],\n      \"score\": \"1/3\"\n    }\n  },\n  \"summary\": {\n    \"total_checks\": 44,\n    \"passed\": 14,\n    \"failed\": 30,\n    \"pass_rate\": \"31.8%\"\n  }\n}\n```",
+        "summary": {
+          "static_issue_count": 19,
+          "llm_review_available": false
+        }
+      },
+      "fixes_applied": [
+        {
+          "description": "Fixed 20 issue(s) from tester feedback",
+          "lines_changed": -149,
+          "timestamp": "2026-05-09T19:01:08.334661"
+        }
+      ],
+      "summary": {
+        "total_stages": 3,
+        "issues_found": 20,
+        "fixes_applied": 1
+      }
+    },
+    {
+      "module": "Boot Protocol",
+      "files": [
+        "Boot_Protocol.h",
+        "Boot_Protocol.c"
+      ],
+      "test_results": [
+        {
+          "stage": "CODE GENERATION",
+          "status": "SUCCESS",
+          "details": "Generated 131 lines of code",
+          "timestamp": "2026-05-09T19:03:37.287187"
+        },
+        {
+          "stage": "TESTING",
+          "status": "ISSUES FOUND",
+          "error_count": 2,
+          "timestamp": "2026-05-09T19:06:23.318059"
+        },
+        {
+          "stage": "FIXING",
+          "status": "FIXES APPLIED",
+          "details": "Fixed 2 issues",
+          "timestamp": "2026-05-09T19:08:12.959835"
+        }
+      ],
+      "errors_found": [
+        {
+          "line": "-",
+          "content": "Symbol CRC is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define CRC in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol XOR is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define XOR in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        }
+      ],
+      "test_feedback": {
+        "static_checks": [
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol CRC is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define CRC in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol XOR is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define XOR in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          }
+        ],
+        "llm_review": {
+          "category_name": {
+            "AUTOSAR Compliance": {
+              "passed": [
+                "Naming conventions follow AUTOSAR style - function/variable names use the correct module prefix"
+              ],
+              "failed": [
+                "undefined_symbol - Symbol CRC is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+                "undefined_symbol - Symbol XOR is used but no #define/typedef was found in generated code or SrcCodeProduct headers."
+              ]
+            },
+            "Embedded C Best Practices": {
+              "passed": [
+                "No malloc/dynamic memory allocation",
+                "All variables are initialized before use"
+              ],
+              "failed": [
+                "No undefined behavior",
+                "No buffer overflow risks"
+              ]
+            },
+            "Code Correctness": {
+              "passed": [
+                "Code matches the requirement",
+                "Logic handles edge cases",
+                "Constants and limits are respected"
+              ],
+              "failed": []
+            },
+            "Type Safety": {
+              "passed": [
+                "Project typedefs are used correctly",
+                "Enums and defines are declared before use"
+              ],
+              "failed": [
+                "No inappropriate type casting"
+              ]
+            },
+            "Code Structure": {
+              "passed": [
+                "Header guards are present in .h files",
+                "Declarations and implementations are separated"
+              ],
+              "failed": []
+            },
+            "Unit Test Compatibility": {
+              "passed": [
+                "Functions are testable in isolation",
+                "Functions have single responsibility",
+                "Error handling and edge cases are testable"
+              ],
+              "failed": [
+                "Return values indicate success/failure clearly"
+              ]
+            }
+          },
+          "summary": {
+            "total_checks": 14,
+            "passed": 9,
+            "failed": 5,
+            "pass_rate": "64%"
+          }
+        },
+        "summary": {
+          "static_issue_count": 2,
+          "llm_review_available": true
+        }
+      },
+      "fixes_applied": [
+        {
+          "description": "Fixed 2 issue(s) from tester feedback",
+          "lines_changed": -98,
+          "timestamp": "2026-05-09T19:08:12.959835"
+        }
+      ],
+      "summary": {
+        "total_stages": 3,
+        "issues_found": 2,
+        "fixes_applied": 1
+      }
+    },
+    {
+      "module": "Boot Safety",
+      "files": [
+        "Boot_Safety.h",
+        "Boot_Safety.c"
+      ],
+      "test_results": [
+        {
+          "stage": "CODE GENERATION",
+          "status": "SUCCESS",
+          "details": "Generated 152 lines of code",
+          "timestamp": "2026-05-09T19:10:55.065448"
+        },
+        {
+          "stage": "TESTING",
+          "status": "ISSUES FOUND",
+          "error_count": 2,
+          "timestamp": "2026-05-09T19:14:01.050301"
+        },
+        {
+          "stage": "FIXING",
+          "status": "FIXES APPLIED",
+          "details": "Fixed 2 issues",
+          "timestamp": "2026-05-09T19:17:48.945481"
+        }
+      ],
+      "errors_found": [
+        {
+          "line": 125,
+          "content": "Placeholder/incomplete implementation text remains: // Implement the code to load and run from image A",
+          "severity": "WARNING",
+          "check": "placeholder_code",
+          "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+        },
+        {
+          "line": 128,
+          "content": "Placeholder/incomplete implementation text remains: // Implement the code to load and run from image B",
+          "severity": "WARNING",
+          "check": "placeholder_code",
+          "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+        }
+      ],
+      "test_feedback": {
+        "static_checks": [
+          {
+            "severity": "WARNING",
+            "check": "placeholder_code",
+            "line": 125,
+            "message": "Placeholder/incomplete implementation text remains: // Implement the code to load and run from image A",
+            "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+          },
+          {
+            "severity": "WARNING",
+            "check": "placeholder_code",
+            "line": 128,
+            "message": "Placeholder/incomplete implementation text remains: // Implement the code to load and run from image B",
+            "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+          }
+        ],
+        "llm_review": {
+          "category_name": {
+            "AUTOSAR Compliance": {
+              "passed": [
+                "Naming conventions follow AUTOSAR style - No issues found"
+              ],
+              "failed": [],
+              "score": "10/10"
+            },
+            "Embedded C Best Practices": {
+              "passed": [
+                "No malloc/dynamic memory allocation - No dynamic memory allocation used",
+                "All variables are initialized before use - All variables initialized before use",
+                "No undefined behavior - No undefined behavior found",
+                "No buffer overflow risks - No buffer overflow risks identified"
+              ],
+              "failed": [],
+              "score": "4/4"
+            },
+            "Code Correctness": {
+              "passed": [
+                "Code matches the requirement - Code implementation matches requirements",
+                "Logic handles edge cases - Logic handles all edge cases correctly",
+                "Constants and limits are respected - Constants and limits respected throughout code"
+              ],
+              "failed": [],
+              "score": "3/3"
+            },
+            "Type Safety": {
+              "passed": [
+                "Project typedefs are used correctly - Correct use of project typedefs",
+                "No inappropriate type casting - No type casting issues found"
+              ],
+              "failed": [],
+              "score": "2/2"
+            },
+            "Code Structure": {
+              "passed": [
+                "Header guards are present in .h files - Header guards present in Boot_Safety.h",
+                "Declarations and implementations are separated - Correct separation of declarations and implementations"
+              ],
+              "failed": [],
+              "score": "2/2"
+            },
+            "Unit Test Compatibility": {
+              "passed": [
+                "Functions are testable in isolation - Functions can be tested independently",
+                "Functions have single responsibility - Single responsibility observed for each function"
+              ],
+              "failed": [],
+              "score": "2/2"
+            }
+          },
+          "summary": {
+            "total_checks": 24,
+            "passed": 18,
+            "failed": 0,
+            "pass_rate": "75%"
+          }
+        },
+        "summary": {
+          "static_issue_count": 2,
+          "llm_review_available": true
+        }
+      },
+      "fixes_applied": [
+        {
+          "description": "Fixed 2 issue(s) from tester feedback",
+          "lines_changed": -20,
+          "timestamp": "2026-05-09T19:17:48.945481"
+        }
+      ],
+      "summary": {
+        "total_stages": 3,
+        "issues_found": 2,
+        "fixes_applied": 1
+      }
+    }
+  ]
+}

@@ -39,7 +39,12 @@ typedef uint8_t CanIf_HrhType;
 #define MAX_PDUS 4
 
 /* Status and return codes */
+#ifndef E_OK
 #define E_OK (Std_ReturnType)0
+#endif
+
+#ifndef E_NOT_OK
 #define E_NOT_OK (Std_ReturnType)1
+#endif
 
 #endif /* COMSTACK_TYPES_H */

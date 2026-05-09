@@ -1,0 +1,1111 @@
+{
+  "generated_at": "2026-05-09T20:11:37.131593",
+  "total_modules": 5,
+  "modules": [
+    {
+      "module": "Key Storage",
+      "files": [
+        "App_Key_Storage.h",
+        "App_Key_Storage.c"
+      ],
+      "test_results": [
+        {
+          "stage": "CODE GENERATION",
+          "status": "SUCCESS",
+          "details": "Generated 126 lines of code",
+          "timestamp": "2026-05-09T19:20:09.907972"
+        },
+        {
+          "stage": "TESTING",
+          "status": "ISSUES FOUND",
+          "error_count": 6,
+          "timestamp": "2026-05-09T19:22:47.340288"
+        },
+        {
+          "stage": "FIXING",
+          "status": "FIXES APPLIED",
+          "details": "Fixed 6 issues",
+          "timestamp": "2026-05-09T19:25:57.338897"
+        }
+      ],
+      "errors_found": [
+        {
+          "line": "-",
+          "content": "Symbol CRC is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define CRC in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Code Correctness: Dead code or unreachable statements - not found",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "Type Safety: No inappropriate type casting",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "AUTOSAR Compliance: Return types follow AUTOSAR/project conventions - not found",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "Unit Test Compatibility: Functions have single responsibility - not checked",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "Unit Test Compatibility: Return values indicate success/failure clearly - not checked",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        }
+      ],
+      "test_feedback": {
+        "static_checks": [
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol CRC is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define CRC in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          }
+        ],
+        "llm_review": {
+          "Embedded C Best Practices": {
+            "passed": [
+              "No malloc/dynamic memory allocation - static buffer used",
+              "All variables are initialized before use"
+            ],
+            "failed": [],
+            "score": "2/8"
+          },
+          "Code Correctness": {
+            "passed": [
+              "Code matches the requirement",
+              "Logic handles edge cases",
+              "Constants and limits are respected"
+            ],
+            "failed": [
+              "Dead code or unreachable statements - not found"
+            ],
+            "score": "3/4"
+          },
+          "Type Safety": {
+            "passed": [
+              "Project typedefs are used correctly",
+              "Enums and defines are declared before use"
+            ],
+            "failed": [
+              "No inappropriate type casting"
+            ],
+            "score": "2/3"
+          },
+          "Code Structure": {
+            "passed": [
+              "Header guards are present in .h files",
+              "Declarations and implementations are separated"
+            ],
+            "failed": [],
+            "score": "2/2"
+          },
+          "AUTOSAR Compliance": {
+            "passed": [
+              "Naming conventions follow AUTOSAR style",
+              "Function/variable names use the correct module prefix"
+            ],
+            "failed": [
+              "Return types follow AUTOSAR/project conventions - not found"
+            ],
+            "score": "2/3"
+          },
+          "Unit Test Compatibility": {
+            "passed": [
+              "Functions are testable in isolation",
+              "Error handling and edge cases are testable"
+            ],
+            "failed": [
+              "Functions have single responsibility - not checked",
+              "Return values indicate success/failure clearly - not checked"
+            ],
+            "score": "2/4"
+          },
+          "summary": {
+            "total_checks": 21,
+            "passed": 14,
+            "failed": 7,
+            "pass_rate": "66%"
+          }
+        },
+        "summary": {
+          "static_issue_count": 1,
+          "llm_review_available": true
+        }
+      },
+      "fixes_applied": [
+        {
+          "description": "Fixed 6 issue(s) from tester feedback",
+          "lines_changed": -14,
+          "timestamp": "2026-05-09T19:25:57.338897"
+        }
+      ],
+      "summary": {
+        "total_stages": 3,
+        "issues_found": 6,
+        "fixes_applied": 1
+      }
+    },
+    {
+      "module": "Key Manager",
+      "files": [
+        "App_Key_Manager.h",
+        "App_Key_Manager.c"
+      ],
+      "test_results": [
+        {
+          "stage": "CODE GENERATION",
+          "status": "SUCCESS",
+          "details": "Generated 112 lines of code",
+          "timestamp": "2026-05-09T19:27:50.744777"
+        },
+        {
+          "stage": "TESTING",
+          "status": "ISSUES FOUND",
+          "error_count": 11,
+          "timestamp": "2026-05-09T19:30:43.916844"
+        },
+        {
+          "stage": "FIXING",
+          "status": "FIXES APPLIED",
+          "details": "Fixed 11 issues",
+          "timestamp": "2026-05-09T19:33:28.963031"
+        }
+      ],
+      "errors_found": [
+        {
+          "line": "-",
+          "content": "Symbol BOOT_SAFETY_STATUS_OK is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define BOOT_SAFETY_STATUS_OK in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol BOOT_SAFETY_STATUS_UNKNOWN is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define BOOT_SAFETY_STATUS_UNKNOWN in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol KEY_EXPIRED is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define KEY_EXPIRED in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol KEY_INVALID is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define KEY_INVALID in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol KEY_VALID is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define KEY_VALID in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Code Correctness: No dead code or unreachable statements - some return values not checked for errors",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "Type Safety: Inappropriate type casting - none found",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "Type Safety: Data sizes match values and buffer lengths - static array size confirmed",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "AUTOSAR Compliance: Return types follow AUTOSAR/project conventions - not explicitly specified",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "Code Structure: No circular includes - none detected",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "Unit Test Compatibility: Return values indicate success/failure clearly - some return values not checked for errors",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        }
+      ],
+      "test_feedback": {
+        "static_checks": [
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol BOOT_SAFETY_STATUS_OK is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define BOOT_SAFETY_STATUS_OK in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol BOOT_SAFETY_STATUS_UNKNOWN is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define BOOT_SAFETY_STATUS_UNKNOWN in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol KEY_EXPIRED is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define KEY_EXPIRED in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol KEY_INVALID is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define KEY_INVALID in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol KEY_VALID is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define KEY_VALID in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          }
+        ],
+        "llm_review": {
+          "Embedded C Best Practices": {
+            "passed": [
+              "No malloc/dynamic memory allocation - static array used",
+              "All variables are initialized before use"
+            ],
+            "failed": [],
+            "score": "2/2"
+          },
+          "Code Correctness": {
+            "passed": [
+              "Code matches the requirement",
+              "Logic handles edge cases",
+              "Constants and limits are respected"
+            ],
+            "failed": [
+              "No dead code or unreachable statements - some return values not checked for errors"
+            ],
+            "score": "3/4"
+          },
+          "Type Safety": {
+            "passed": [
+              "Project typedefs used correctly",
+              "Enums and defines declared before use"
+            ],
+            "failed": [
+              "Inappropriate type casting - none found",
+              "Data sizes match values and buffer lengths - static array size confirmed"
+            ],
+            "score": "2/3"
+          },
+          "AUTOSAR Compliance": {
+            "passed": [
+              "Naming conventions follow AUTOSAR style",
+              "Function/variable names use the correct module prefix"
+            ],
+            "failed": [
+              "Return types follow AUTOSAR/project conventions - not explicitly specified"
+            ],
+            "score": "2/3"
+          },
+          "Code Structure": {
+            "passed": [
+              "Header guards present in .h files",
+              "Declarations and implementations separated",
+              "Include dependencies are correct and minimal"
+            ],
+            "failed": [
+              "No circular includes - none detected"
+            ],
+            "score": "3/4"
+          },
+          "Unit Test Compatibility": {
+            "passed": [
+              "Functions are testable in isolation",
+              "Functions have single responsibility",
+              "Error handling and edge cases are testable"
+            ],
+            "failed": [
+              "Return values indicate success/failure clearly - some return values not checked for errors"
+            ],
+            "score": "3/4"
+          },
+          "summary": {
+            "total_checks": 15,
+            "passed": 11,
+            "failed": 4,
+            "pass_rate": "73%"
+          }
+        },
+        "summary": {
+          "static_issue_count": 5,
+          "llm_review_available": true
+        }
+      },
+      "fixes_applied": [
+        {
+          "description": "Fixed 11 issue(s) from tester feedback",
+          "lines_changed": -6,
+          "timestamp": "2026-05-09T19:33:28.963031"
+        }
+      ],
+      "summary": {
+        "total_stages": 3,
+        "issues_found": 11,
+        "fixes_applied": 1
+      }
+    },
+    {
+      "module": "Security Handler",
+      "files": [
+        "App_Security.h",
+        "App_Security.c"
+      ],
+      "test_results": [
+        {
+          "stage": "CODE GENERATION",
+          "status": "SUCCESS",
+          "details": "Generated 80 lines of code",
+          "timestamp": "2026-05-09T19:35:15.829823"
+        },
+        {
+          "stage": "TESTING",
+          "status": "ISSUES FOUND",
+          "error_count": 22,
+          "timestamp": "2026-05-09T19:39:08.461777"
+        },
+        {
+          "stage": "FIXING",
+          "status": "FIXES APPLIED",
+          "details": "Fixed 22 issues",
+          "timestamp": "2026-05-09T19:56:23.729277"
+        }
+      ],
+      "errors_found": [
+        {
+          "line": "-",
+          "content": "Symbol AES is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define AES in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol CRC32 is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define CRC32 in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": 38,
+          "content": "Placeholder/incomplete implementation text remains: // Placeholder for security initialization",
+          "severity": "WARNING",
+          "check": "placeholder_code",
+          "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+        },
+        {
+          "line": 48,
+          "content": "Placeholder/incomplete implementation text remains: // Verify digital signature (placeholder implementation)",
+          "severity": "WARNING",
+          "check": "placeholder_code",
+          "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+        },
+        {
+          "line": 51,
+          "content": "Placeholder/incomplete implementation text remains: // Placeholder: Always return true for simplicity",
+          "severity": "WARNING",
+          "check": "placeholder_code",
+          "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+        },
+        {
+          "line": 56,
+          "content": "Placeholder/incomplete implementation text remains: // Basic encryption wrapper (placeholder implementation)",
+          "severity": "WARNING",
+          "check": "placeholder_code",
+          "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+        },
+        {
+          "line": 58,
+          "content": "Placeholder/incomplete implementation text remains: // Placeholder: Encrypt key using a simple XOR operation for demonstration",
+          "severity": "WARNING",
+          "check": "placeholder_code",
+          "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+        },
+        {
+          "line": 65,
+          "content": "Placeholder/incomplete implementation text remains: // Basic decryption wrapper (placeholder implementation)",
+          "severity": "WARNING",
+          "check": "placeholder_code",
+          "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+        },
+        {
+          "line": 67,
+          "content": "Placeholder/incomplete implementation text remains: // Placeholder: Decrypt key using a simple XOR operation for demonstration",
+          "severity": "WARNING",
+          "check": "placeholder_code",
+          "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+        },
+        {
+          "line": 76,
+          "content": "Placeholder/incomplete implementation text remains: 1. **CRC32 Function**: Ensure you have a CRC32 function available or implement one.",
+          "severity": "WARNING",
+          "check": "placeholder_code",
+          "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+        },
+        {
+          "line": 77,
+          "content": "Placeholder/incomplete implementation text remains: 2. **Security Initialization**: The `App_Security_Init` function is a placeholder. You should integrate with any security modules you have, such as Boot_Safety.",
+          "severity": "WARNING",
+          "check": "placeholder_code",
+          "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+        },
+        {
+          "line": 78,
+          "content": "Placeholder/incomplete implementation text remains: 3. **Signature Verification**: The `App_Security_VerifySignature` function is a placeholder. In a real application, this would involve verifying the signature against a public key.",
+          "severity": "WARNING",
+          "check": "placeholder_code",
+          "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+        },
+        {
+          "line": 79,
+          "content": "Placeholder/incomplete implementation text remains: 4. **Encryption/Decryption**: The placeholder implementations use simple XOR for demonstration purposes. In a real application, use secure encryption algorithms like AES.",
+          "severity": "WARNING",
+          "check": "placeholder_code",
+          "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+        },
+        {
+          "line": "-",
+          "content": "AUTOSAR Compliance: Return types follow AUTOSAR/project conventions - some functions return integers or booleans without explicit type declarations",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "Embedded C Best Practices: No undefined behavior - some functions may behave unexpectedly if input values are not within expected ranges",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "Embedded C Best Practices: No buffer overflow risks - but some functions do not check the size of buffers before writing to them",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "Code Correctness: Logic handles edge cases - some functions may not handle unexpected input values correctly",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "Code Correctness: Constants and limits are respected - but some magic numbers are used",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "Type Safety: No inappropriate type casting - all casts are safe and valid",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "Type Safety: Enums and defines are declared before use - all macros are defined at the top of their respective files",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "Code Structure: Include dependencies are correct and minimal - some unnecessary includes may be removed",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "Unit Test Compatibility: No hardcoded dependencies that prevent mocking - some functions may not be easily mockable",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        }
+      ],
+      "test_feedback": {
+        "static_checks": [
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol AES is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define AES in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol CRC32 is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define CRC32 in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "WARNING",
+            "check": "placeholder_code",
+            "line": 38,
+            "message": "Placeholder/incomplete implementation text remains: // Placeholder for security initialization",
+            "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+          },
+          {
+            "severity": "WARNING",
+            "check": "placeholder_code",
+            "line": 48,
+            "message": "Placeholder/incomplete implementation text remains: // Verify digital signature (placeholder implementation)",
+            "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+          },
+          {
+            "severity": "WARNING",
+            "check": "placeholder_code",
+            "line": 51,
+            "message": "Placeholder/incomplete implementation text remains: // Placeholder: Always return true for simplicity",
+            "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+          },
+          {
+            "severity": "WARNING",
+            "check": "placeholder_code",
+            "line": 56,
+            "message": "Placeholder/incomplete implementation text remains: // Basic encryption wrapper (placeholder implementation)",
+            "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+          },
+          {
+            "severity": "WARNING",
+            "check": "placeholder_code",
+            "line": 58,
+            "message": "Placeholder/incomplete implementation text remains: // Placeholder: Encrypt key using a simple XOR operation for demonstration",
+            "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+          },
+          {
+            "severity": "WARNING",
+            "check": "placeholder_code",
+            "line": 65,
+            "message": "Placeholder/incomplete implementation text remains: // Basic decryption wrapper (placeholder implementation)",
+            "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+          },
+          {
+            "severity": "WARNING",
+            "check": "placeholder_code",
+            "line": 67,
+            "message": "Placeholder/incomplete implementation text remains: // Placeholder: Decrypt key using a simple XOR operation for demonstration",
+            "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+          },
+          {
+            "severity": "WARNING",
+            "check": "placeholder_code",
+            "line": 76,
+            "message": "Placeholder/incomplete implementation text remains: 1. **CRC32 Function**: Ensure you have a CRC32 function available or implement one.",
+            "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+          },
+          {
+            "severity": "WARNING",
+            "check": "placeholder_code",
+            "line": 77,
+            "message": "Placeholder/incomplete implementation text remains: 2. **Security Initialization**: The `App_Security_Init` function is a placeholder. You should integrate with any security modules you have, such as Boot_Safety.",
+            "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+          },
+          {
+            "severity": "WARNING",
+            "check": "placeholder_code",
+            "line": 78,
+            "message": "Placeholder/incomplete implementation text remains: 3. **Signature Verification**: The `App_Security_VerifySignature` function is a placeholder. In a real application, this would involve verifying the signature against a public key.",
+            "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+          },
+          {
+            "severity": "WARNING",
+            "check": "placeholder_code",
+            "line": 79,
+            "message": "Placeholder/incomplete implementation text remains: 4. **Encryption/Decryption**: The placeholder implementations use simple XOR for demonstration purposes. In a real application, use secure encryption algorithms like AES.",
+            "fix_hint": "Replace placeholder text with concrete project constants or real implementation."
+          }
+        ],
+        "llm_review": {
+          "AUTOSAR Compliance": {
+            "passed": [
+              "Naming conventions follow AUTOSAR style - all file names, variable names, and function names are correctly prefixed with 'App_Security'",
+              "Function/variable names use the correct module prefix - all names start with 'App_Security_'"
+            ],
+            "failed": [
+              "Return types follow AUTOSAR/project conventions - some functions return integers or booleans without explicit type declarations"
+            ],
+            "score": "2/3"
+          },
+          "Embedded C Best Practices": {
+            "passed": [
+              "No malloc/dynamic memory allocation - all variables are statically allocated",
+              "All variables are initialized before use - no uninitialized variables found"
+            ],
+            "failed": [
+              "No undefined behavior - some functions may behave unexpectedly if input values are not within expected ranges",
+              "No buffer overflow risks - but some functions do not check the size of buffers before writing to them"
+            ],
+            "score": "2/4"
+          },
+          "Code Correctness": {
+            "passed": [
+              "Code matches the requirement - all functions implement the required security features"
+            ],
+            "failed": [
+              "Logic handles edge cases - some functions may not handle unexpected input values correctly",
+              "Constants and limits are respected - but some magic numbers are used"
+            ],
+            "score": "2/3"
+          },
+          "Type Safety": {
+            "passed": [
+              "Project typedefs are used correctly - CRC32 is properly declared and used"
+            ],
+            "failed": [
+              "No inappropriate type casting - all casts are safe and valid",
+              "Enums and defines are declared before use - all macros are defined at the top of their respective files"
+            ],
+            "score": "3/3"
+          },
+          "Code Structure": {
+            "passed": [
+              "Header guards are present in .h files - App_Security.h has correct guards",
+              "Declarations and implementations are separated - functions are declared in App_Security.h and implemented in App_Security.c"
+            ],
+            "failed": [
+              "Include dependencies are correct and minimal - some unnecessary includes may be removed"
+            ],
+            "score": "2/3"
+          },
+          "Unit Test Compatibility": {
+            "passed": [
+              "Functions are testable in isolation - all functions can be tested individually",
+              "Functions have single responsibility - each function performs one specific task"
+            ],
+            "failed": [
+              "No hardcoded dependencies that prevent mocking - some functions may not be easily mockable"
+            ],
+            "score": "2/3"
+          },
+          "summary": {
+            "total_checks": 15,
+            "passed": 8,
+            "failed": 7,
+            "pass_rate": "53%"
+          }
+        },
+        "summary": {
+          "static_issue_count": 13,
+          "llm_review_available": true
+        }
+      },
+      "fixes_applied": [
+        {
+          "description": "Fixed 22 issue(s) from tester feedback",
+          "lines_changed": 8,
+          "timestamp": "2026-05-09T19:56:23.729277"
+        }
+      ],
+      "summary": {
+        "total_stages": 3,
+        "issues_found": 22,
+        "fixes_applied": 1
+      }
+    },
+    {
+      "module": "ComStack Interface",
+      "files": [
+        "App_ComInterface.h",
+        "App_ComInterface.c"
+      ],
+      "test_results": [
+        {
+          "stage": "CODE GENERATION",
+          "status": "SUCCESS",
+          "details": "Generated 108 lines of code",
+          "timestamp": "2026-05-09T19:58:22.080412"
+        },
+        {
+          "stage": "TESTING",
+          "status": "ISSUES FOUND",
+          "error_count": 3,
+          "timestamp": "2026-05-09T20:01:01.605161"
+        },
+        {
+          "stage": "FIXING",
+          "status": "FIXES APPLIED",
+          "details": "Fixed 3 issues",
+          "timestamp": "2026-05-09T20:03:48.890991"
+        }
+      ],
+      "errors_found": [
+        {
+          "line": "-",
+          "content": "Symbol CAN is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define CAN in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol CAN_RX_ID_KEY_REQUEST is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define CAN_RX_ID_KEY_REQUEST in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol CAN_TX_ID_KEY_REQUEST is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define CAN_TX_ID_KEY_REQUEST in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        }
+      ],
+      "test_feedback": {
+        "static_checks": [
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol CAN is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define CAN in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol CAN_RX_ID_KEY_REQUEST is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define CAN_RX_ID_KEY_REQUEST in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol CAN_TX_ID_KEY_REQUEST is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define CAN_TX_ID_KEY_REQUEST in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          }
+        ],
+        "llm_review": {
+          "category_name": {
+            "Autosar Compliance": {
+              "passed": [
+                "Naming conventions follow AUTOSAR style",
+                "Function/variable names use the correct module prefix"
+              ],
+              "failed": [
+                "undefined_symbol",
+                "Symbol CAN_RX_ID_KEY_REQUEST is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+                "Symbol CAN_TX_ID_KEY_REQUEST is used but no #define/typedef was found in generated code or SrcCodeProduct headers."
+              ],
+              "score": "2/4"
+            },
+            "Embedded C Best Practices": {
+              "passed": [
+                "No malloc/dynamic memory allocation",
+                "All variables are initialized before use"
+              ],
+              "failed": [
+                "No undefined behavior",
+                "No buffer overflow risks",
+                "Static/local scope is used appropriately"
+              ],
+              "score": "2/4"
+            },
+            "Code Correctness": {
+              "passed": [
+                "Code matches the requirement",
+                "Logic handles edge cases",
+                "Constants and limits are respected"
+              ],
+              "failed": [
+                "No dead code or unreachable statements"
+              ],
+              "score": "3/4"
+            },
+            "Type Safety": {
+              "passed": [
+                "Project typedefs are used correctly",
+                "Enums and defines are declared before use"
+              ],
+              "failed": [
+                "No inappropriate type casting"
+              ],
+              "score": "2/3"
+            },
+            "Code Structure": {
+              "passed": [
+                "Header guards are present in .h files",
+                "Declarations and implementations are separated"
+              ],
+              "failed": [
+                "Include dependencies are correct and minimal",
+                "No circular includes"
+              ],
+              "score": "2/4"
+            },
+            "Unit Test Compatibility": {
+              "passed": [
+                "Functions are testable in isolation",
+                "Functions have single responsibility"
+              ],
+              "failed": [
+                "No hardcoded dependencies that prevent mocking",
+                "Error handling and edge cases are testable",
+                "Return values indicate success/failure clearly"
+              ],
+              "score": "2/5"
+            }
+          },
+          "summary": {
+            "total_checks": 20,
+            "passed": 12,
+            "failed": 8,
+            "pass_rate": "60%"
+          }
+        },
+        "summary": {
+          "static_issue_count": 3,
+          "llm_review_available": true
+        }
+      },
+      "fixes_applied": [
+        {
+          "description": "Fixed 3 issue(s) from tester feedback",
+          "lines_changed": -14,
+          "timestamp": "2026-05-09T20:03:48.890991"
+        }
+      ],
+      "summary": {
+        "total_stages": 3,
+        "issues_found": 3,
+        "fixes_applied": 1
+      }
+    },
+    {
+      "module": "App Main",
+      "files": [
+        "App_Main.h",
+        "App_Main.c"
+      ],
+      "test_results": [
+        {
+          "stage": "CODE GENERATION",
+          "status": "SUCCESS",
+          "details": "Generated 130 lines of code",
+          "timestamp": "2026-05-09T20:05:40.525024"
+        },
+        {
+          "stage": "TESTING",
+          "status": "ISSUES FOUND",
+          "error_count": 9,
+          "timestamp": "2026-05-09T20:08:30.036759"
+        },
+        {
+          "stage": "FIXING",
+          "status": "FIXES APPLIED",
+          "details": "Fixed 9 issues",
+          "timestamp": "2026-05-09T20:11:37.125611"
+        }
+      ],
+      "errors_found": [
+        {
+          "line": "-",
+          "content": "Symbol BOOT_SAFETY_SUCCESS is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define BOOT_SAFETY_SUCCESS in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol KEY_COMMAND_SET_PIN is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define KEY_COMMAND_SET_PIN in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Symbol SECURITY_COMMAND_ENABLE_FEATURES is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+          "severity": "ERROR",
+          "check": "undefined_symbol",
+          "fix_hint": "Define SECURITY_COMMAND_ENABLE_FEATURES in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+        },
+        {
+          "line": "-",
+          "content": "Embedded C Best Practices: undefined_symbol: BOOT_SAFETY_SUCCESS, KEY_COMMAND_SET_PIN, SECURITY_COMMAND_ENABLE_FEATURES",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "Code Correctness: No checks for NULL or invalid values in KeyManager_Create, Security_Create, and ComInterface_Create",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "Type Safety: No type checking for command processing in App_ProcessCommands",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "Code Structure: No error handling for unexpected commands in App_ProcessCommands",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "Unit Test Compatibility: Error handling and edge cases not easily testable",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        },
+        {
+          "line": "-",
+          "content": "Unit Test Compatibility: Return values do not indicate success/failure clearly",
+          "severity": "WARNING",
+          "check": "llm_checklist",
+          "fix_hint": "Review the failed checklist item and update the generated code."
+        }
+      ],
+      "test_feedback": {
+        "static_checks": [
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol BOOT_SAFETY_SUCCESS is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define BOOT_SAFETY_SUCCESS in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol KEY_COMMAND_SET_PIN is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define KEY_COMMAND_SET_PIN in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          },
+          {
+            "severity": "ERROR",
+            "check": "undefined_symbol",
+            "message": "Symbol SECURITY_COMMAND_ENABLE_FEATURES is used but no #define/typedef was found in generated code or SrcCodeProduct headers.",
+            "fix_hint": "Define SECURITY_COMMAND_ENABLE_FEATURES in the module header/config header, include the header that defines it, or replace it with an existing project constant."
+          }
+        ],
+        "llm_review": {
+          "Embedded C Best Practices": {
+            "passed": [
+              "No malloc/dynamic memory allocation - static allocation used",
+              "All variables are initialized before use"
+            ],
+            "failed": [
+              "undefined_symbol: BOOT_SAFETY_SUCCESS, KEY_COMMAND_SET_PIN, SECURITY_COMMAND_ENABLE_FEATURES"
+            ],
+            "score": "2/6"
+          },
+          "Code Correctness": {
+            "passed": [
+              "Logic handles edge cases in App_Init and App_Run",
+              "Constants and limits are respected in Boot_Safety_Validate and Boot_Jump_IsApplicationValid"
+            ],
+            "failed": [
+              "No checks for NULL or invalid values in KeyManager_Create, Security_Create, and ComInterface_Create"
+            ],
+            "score": "2/4"
+          },
+          "Type Safety": {
+            "passed": [
+              "Project typedefs are used correctly for KeyManager, Security, and ComInterface"
+            ],
+            "failed": [
+              "No type checking for command processing in App_ProcessCommands"
+            ],
+            "score": "1/3"
+          },
+          "Code Structure": {
+            "passed": [
+              "Header guards present in App_Main.h",
+              "Declarations and implementations separated in App_Main.c",
+              "Include dependencies correct and minimal"
+            ],
+            "failed": [
+              "No error handling for unexpected commands in App_ProcessCommands"
+            ],
+            "score": "3/4"
+          },
+          "Unit Test Compatibility": {
+            "passed": [
+              "Functions are testable in isolation",
+              "Functions have single responsibility"
+            ],
+            "failed": [
+              "Error handling and edge cases not easily testable",
+              "Return values do not indicate success/failure clearly"
+            ],
+            "score": "2/4"
+          },
+          "summary": {
+            "total_checks": 24,
+            "passed": 9,
+            "failed": 15,
+            "pass_rate": "37.5%"
+          }
+        },
+        "summary": {
+          "static_issue_count": 3,
+          "llm_review_available": true
+        }
+      },
+      "fixes_applied": [
+        {
+          "description": "Fixed 9 issue(s) from tester feedback",
+          "lines_changed": 9,
+          "timestamp": "2026-05-09T20:11:37.125611"
+        }
+      ],
+      "summary": {
+        "total_stages": 3,
+        "issues_found": 9,
+        "fixes_applied": 1
+      }
+    }
+  ]
+}

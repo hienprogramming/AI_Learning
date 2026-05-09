@@ -1,0 +1,24 @@
+#ifndef RTE_CFG_H
+#define RTE_CFG_H
+
+#include "Rte_Type.h"
+
+#define RTE_VENDOR_ID 0u
+#define RTE_MODULE_ID 2u
+#define RTE_SW_MAJOR_VERSION 1u
+#define RTE_SW_MINOR_VERSION 0u
+#define RTE_SW_PATCH_VERSION 0u
+
+#define RTE_MAX_SIGNALS 8u
+
+#define RTE_SIGNAL_KEY_REQUEST 0u
+#define RTE_SIGNAL_KEY_RESPONSE 1u
+#define RTE_SIGNAL_APP_STATUS 2u
+#define RTE_SIGNAL_SECURITY_STATUS 3u
+
+#define RTE_EVENT_APP_INIT 0u
+#define RTE_EVENT_APP_10MS 1u
+#define RTE_EVENT_APP_100MS 2u
+#define RTE_EVENT_BACKGROUND 3u
+
+#endif /* RTE_CFG_H */

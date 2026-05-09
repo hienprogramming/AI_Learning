@@ -1,40 +1,47 @@
 #include "Boot_Jump.h"
-#include "stm32f10x.h"
+#include <stdint.h>
 
 #define APPLICATION_START_ADDRESS 0x08008000
+#define MSP 0x20008000
+#define STM32F103C8T6 "STM32F103C8T6"
 
-// Function to validate the application
-void Boot_IsApplicationValid(void) {
-    uint32_t *appStackPointer = (uint32_t *)APPLICATION_START_ADDRESS;
-    uint32_t *appResetVector = (uint32_t *)(APPLICATION_START_ADDRESS + 4);
+/**
+ * @brief Validates if the application is valid based on stack pointer and reset vector.
+ *
+ * @return 1 if the application is valid, 0 otherwise.
+ */
+uint8_t Boot_IsApplicationValid(void)
+{
+    uint32_t* pApplicationStack = (uint32_t*)APPLICATION_START_ADDRESS;
+    uint32_t* pApplicationResetVector = pApplicationStack + 1;
 
     // Check if stack pointer and reset vector are valid
-    if ((appStackPointer != NULL) && (appResetVector != NULL)) {
-        __IO uint32_t spValue = appStackPointer[0]; // MSP value
-        __IO uint32_t pcValue = appResetVector[1]; // Reset handler address
-
-        // Check if the reset vector is a valid function pointer
-        if ((pcValue >= APPLICATION_START_ADDRESS) && (pcValue < 0x10000000)) {
-            // Valid application
-        } else {
-            // Invalid application, stay in bootloader
-        }
-    } else {
-        // Invalid application, stay in bootloader
+    if (*pApplicationStack == MSP && *pApplicationResetVector != 0)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
     }
 }
 
-// Function to jump to the application
-void Boot_JumpToApplication(void) {
-    uint32_t *appResetVector = (uint32_t *)(APPLICATION_START_ADDRESS + 4);
-    __IO uint32_t pcValue = appResetVector[1]; // Reset handler address
+/**
+ * @brief Jumps to the application's reset handler.
+ */
+void Boot_JumpToApplication(void)
+{
+    uint32_t* pApplicationStack = (uint32_t*)APPLICATION_START_ADDRESS;
+    uint32_t* pApplicationResetVector = pApplicationStack + 1;
 
-    // Disable all interrupts
-    __disable_irq();
+    // Disable interrupts
+    __asm volatile("CPSID I");
 
-    // Set the MSP stack pointer to the application's stack pointer
-    __set_MSP(appResetVector[0]);
+    // Set the stack pointer to the application's stack
+    __asm volatile("MSR MSP, %0" : : "r"(*pApplicationStack));
 
-    // Jump to the application reset handler
-    ((void (*)(void))pcValue)();
+    // Jump to the application's reset handler
+    typedef void (*ApplicationResetHandler)(void);
+    ApplicationResetHandler app_reset_handler = (ApplicationResetHandler)(*pApplicationResetVector);
+    app_reset_handler();
 }

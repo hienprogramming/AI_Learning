@@ -1,0 +1,45 @@
+
+============================================================
+[*] Runtime Environment Configuration
+============================================================
+    os_name           : Windows
+    os_version        : 11
+    python_version    : 3.12.10
+    architecture      : AMD64
+    shell             : powershell
+    path_sep          : \
+    line_sep          : '\r\n'
+============================================================
+
+
+============================================================
+[*] OS Task Mappings
+============================================================
+    activate_venv       : venv\Scripts\Activate.ps1
+    python_exec         : python.exe
+    pip_exec            : pip.exe
+    shell_exec          : powershell
+    run_script          : <callable>
+    set_env             : <callable>
+    path_join           : <callable>
+============================================================
+
+[RTE] Configuration saved to: Logs\rte_config.json
+
+============================================================
+[*] AUTOSAR Product RTE -> OS Task Mapping
+============================================================
+    Project: DigitalKey_AUTOSAR_Prototype
+
+    OsTask_Init            period=0ms     priority=1  activation=autostart    -> Rte_Runnable_App_Init
+    OsTask_App_10ms        period=10ms    priority=3  activation=alarm        -> Rte_Runnable_App_10ms
+    OsTask_App_100ms       period=100ms   priority=5  activation=alarm        -> Rte_Runnable_App_100ms
+    OsTask_Background      period=0ms     priority=10 activation=cooperative  -> Rte_Runnable_Background
+============================================================
+
+[*] Running environment check...
+
+
+============================================================
+[SUCCESS] All projects generation complete!
+============================================================

@@ -4,69 +4,78 @@
 #include "Com.h"
 #include "CanIf.h"
 
-// Initialize all app subsystems
-void App_Init(void) {
-    Boot_Safety_Initialize();
-    Boot_Jump_Initialize();
-    Com_Initialize();
-    CanIf_Initialize();
-
-    if (!Boot_Safety_CheckIntegrity()) {
-        App_HandleError(0xFFFFFFFF);
+// Function to initialize all app subsystems
+void App_Init(AppSubsystem *subsys) {
+    // Initialize Key Manager
+    subsys->KeyMgr = KeyManager_Create();
+    if (!subsys->KeyMgr) {
+        App_HandleError(0x01);
+        return;
     }
 
-    if (!Boot_Jump_IsValidApp()) {
-        App_HandleError(0xFFFFFFFE);
+    // Initialize Security Manager
+    subsys->SecurityMgr = Security_Create();
+    if (!subsys->SecurityMgr) {
+        App_HandleError(0x02);
+        return;
+    }
+
+    // Initialize Com Interface
+    subsys->ComIntf = ComInterface_Create();
+    if (!subsys->ComIntf) {
+        App_HandleError(0x03);
+        return;
+    }
+
+    // Validate app integrity using Boot_Safety
+    if (Boot_Safety_Validate() != BOOT_SAFETY_SUCCESS) {
+        App_HandleError(0x04);
+        return;
+    }
+
+    // Check application validity using Boot_Jump functions
+    if (!Boot_Jump_IsApplicationValid()) {
+        App_HandleError(0x05);
+        return;
     }
 }
 
 // Main application loop
-Std_ReturnType App_Run(void) {
+void App_Run(AppSubsystem *subsys) {
     while (1) {
-        App_ProcessCommands();
+        // Process incoming commands
+        App_ProcessCommands(subsys);
 
-        // Perform necessary tasks here
+        // Perform any other periodic tasks here
+
+        // Delay or yield the CPU if necessary
     }
-
-    return E_NOT_OK; // Should never reach here
 }
 
-// Process incoming commands
-void App_ProcessCommands(void) {
-    if (Com_HasNewCommand()) {
-        uint8_t command = Com_GetNextCommand();
+// Function to handle incoming commands
+void App_ProcessCommands(AppSubsystem *subsys) {
+    uint8_t command;
+    while (ComInterface_GetCommand(&command)) {
         switch (command) {
-            case COMMAND_LOCK:
-                Key_Manager_Lock();
+            case KEY_COMMAND_SET_PIN:
+                KeyMgr_SetPin(subsys->KeyMgr);
                 break;
-            case COMMAND_UNLOCK:
-                Key_Manager_Unlock();
+            case SECURITY_COMMAND_ENABLE_FEATURES:
+                SecurityMgr_EnableFeatures(subsys->SecurityMgr);
                 break;
+            // Add more cases as needed
             default:
-                App_HandleError(0xFFFFFFFD);
-                break;
-        }
-    }
-
-    if (CanIf_HasNewCommand()) {
-        uint8_t command = CanIf_GetNextCommand();
-        switch (command) {
-            case COMMAND_LOCK:
-                Key_Manager_Lock();
-                break;
-            case COMMAND_UNLOCK:
-                Key_Manager_Unlock();
-                break;
-            default:
-                App_HandleError(0xFFFFFFFC);
+                App_HandleError(0x10);
                 break;
         }
     }
 }
 
-// Error handling and recovery
+// Function to handle errors
 void App_HandleError(uint32_t error_code) {
+    // Log the error or take appropriate action
+    // For example, go into a safe mode
     while (1) {
-        // Loop or reset
+        // Do nothing or perform safe operations
     }
 }
