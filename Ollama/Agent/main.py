@@ -550,48 +550,6 @@ def save_file(output_dir: Path, filename: str, content: str):
     return output_file
 
 
-def log_agent(agent_name: str, module_name: str, message: str):
-    print(f"         [{agent_name}] {message}: {module_name}", flush=True)
-
-
-def format_feedback_for_fixer(feedback) -> str:
-    """Build a compact, actionable issue list for fixer_agent."""
-    if not isinstance(feedback, dict):
-        return str(feedback)
-
-    lines = []
-    static_checks = feedback.get("static_checks", [])
-    if static_checks:
-        lines.append("Deterministic static findings:")
-        for finding in static_checks:
-            location = f" line {finding['line']}" if finding.get("line") else ""
-            lines.append(
-                f"- [{finding.get('severity', 'INFO')}] {finding.get('check', 'check')}{location}: "
-                f"{finding.get('message', '')}"
-            )
-            if finding.get("fix_hint"):
-                lines.append(f"  Fix hint: {finding['fix_hint']}")
-
-    llm_review = feedback.get("llm_review", {})
-    if isinstance(llm_review, dict):
-        failed_items = []
-        for category, result in llm_review.items():
-            if category == "summary" or not isinstance(result, dict):
-                continue
-            for failed in result.get("failed", []):
-                failed_items.append(f"- {category}: {failed}")
-        if failed_items:
-            lines.append("LLM checklist failures:")
-            lines.extend(failed_items)
-
-    if feedback.get("error"):
-        lines.append(f"Tester response issue: {feedback['error']}")
-        if feedback.get("raw"):
-            lines.append(f"Raw tester response: {feedback['raw'][:1000]}")
-
-    return "\n".join(lines) if lines else json.dumps(feedback, indent=2, ensure_ascii=False)
-
-
 def print_agent_plan(modules, agents):
     print("\n" + "=" * 60, flush=True)
     print("[*] Agent/module pre-check plan", flush=True)
@@ -782,7 +740,7 @@ def setup_app_modules():
 
 
 def generate_modules(project_name: str, output_dir: Path, project_context: str, modules: list, agents: dict):
-    """Generate code for all modules in a project with detailed logging"""
+    """Generate code for all modules while each agent owns its execution details."""
     import dev_agent
     import fixer_agent
     import tester_agent
@@ -792,7 +750,6 @@ def generate_modules(project_name: str, output_dir: Path, project_context: str, 
     print("=" * 70)
     print_agent_plan(modules, agents)
 
-    # List to track all test reports
     all_reports = []
 
     for module_info in modules:
@@ -801,120 +758,40 @@ def generate_modules(project_name: str, output_dir: Path, project_context: str, 
         print(f"  Files:       {', '.join(module_info['files'])}")
         print(f"  Description: {module_info['desc']}")
         print(f"{'='*70}")
-        
-        # Create test report for this module
-        report = TestReport(module_info["name"], module_info['files'])
-        
-        # ========== CODE GENERATION PHASE ==========
-        print(f"\n[PHASE 1/3] CODE GENERATION", flush=True)
-        print(f"  Agent:   {agents['dev']}", flush=True)
-        print(f"  Status:  Running dev_agent...", flush=True)
-        
+
+        report = TestReport(module_info["name"], module_info["files"])
+
         try:
-            log_agent("dev_agent", module_info["name"], "Loading module")
-            code = dev_agent.run(project_context + module_info['req'])
-            log_agent("dev_agent", module_info["name"], "Finished module")
-            
-            report.log_code_generation(code)
-            print(f"  Status:  ✓ Code generated successfully", flush=True)
-            print(f"  Details: {code.count(chr(10))} lines, ~{len(code)} bytes", flush=True)
+            code = dev_agent.execute_module(project_context, module_info, report)
         except Exception as e:
-            print(f"  Status:  ✗ FAILED - {str(e)}", flush=True)
+            print(f"  Status:  FAILED - {str(e)}", flush=True)
             continue
 
-        # ========== TESTING PHASE ==========
-        print(f"\n[PHASE 2/3] TESTING & VALIDATION", flush=True)
-        print(f"  Agent:   {agents['test']}", flush=True)
-        print(f"  Purpose: Validate code quality, syntax, symbols, and functionality", flush=True)
-        print(f"  Checks:  deterministic static checks + LLM checklist review", flush=True)
-        print(f"           - undefined #define/typedef-like symbols", flush=True)
-        print(f"           - placeholder/TODO text", flush=True)
-        print(f"           - dynamic memory usage", flush=True)
-        print(f"           - AUTOSAR/embedded C checklist", flush=True)
-        print(f"  Status:  Running tester_agent...", flush=True)
-        
         try:
-            log_agent("tester_agent", module_info["name"], "Loading module")
-            feedback = tester_agent.run(code)
-            log_agent("tester_agent", module_info["name"], "Finished module")
-            
-            report.log_test_feedback(feedback)
-            if isinstance(feedback, dict):
-                summary = feedback.get("summary", {})
-                print(
-                    f"  Static:  {summary.get('static_issue_count', 0)} deterministic issue(s)",
-                    flush=True,
-                )
-                print(
-                    f"  LLM:     review {'available' if summary.get('llm_review_available') else 'unavailable/parse failed'}",
-                    flush=True,
-                )
-            
-            if report.errors_found:
-                print(f"  Status:  ⚠ Issues detected - {len(report.errors_found)} problem(s) found", flush=True)
-                print(f"\n  [ISSUES DETECTED]", flush=True)
-                for i, error in enumerate(report.errors_found[:5], 1):  # Show first 5
-                    severity = error['severity']
-                    content = error['content'][:70]
-                    print(f"    {i}. [{severity:8s}] {content}", flush=True)
-                if len(report.errors_found) > 5:
-                    print(f"    ... and {len(report.errors_found) - 5} more issues", flush=True)
-            else:
-                print(f"  Status:  ✓ All tests passed", flush=True)
-                print(f"  Details: No issues detected", flush=True)
+            feedback = tester_agent.execute_module(code, module_info, report)
         except Exception as e:
-            print(f"  Status:  ✗ Test FAILED - {str(e)}", flush=True)
+            print(f"  Status:  Test FAILED - {str(e)}", flush=True)
             continue
 
-        # ========== FIXING PHASE ==========
-        if report.errors_found:
-            print(f"\n[PHASE 3/3] FIXING & IMPROVEMENT", flush=True)
-            print(f"  Agent:   {agents['fix']}", flush=True)
-            print(f"  Purpose: Fix issues and improve code quality", flush=True)
-            print(f"  Issues:  Fixing {len(report.errors_found)} detected problem(s)", flush=True)
-            print(f"  Status:  Running fixer_agent...", flush=True)
-            
-            try:
-                log_agent("fixer_agent", module_info["name"], "Loading module")
-                fix_input = format_feedback_for_fixer(feedback)
-                print(f"  Fix log: Passing actionable issue list to fixer_agent", flush=True)
-                for line in fix_input.splitlines()[:8]:
-                    print(f"           {line[:100]}", flush=True)
-                if len(fix_input.splitlines()) > 8:
-                    print(f"           ...", flush=True)
-                fixed = fixer_agent.run(code, fix_input)
-                log_agent("fixer_agent", module_info["name"], "Finished module")
-                
-                fix_description = f"Fixed {len(report.errors_found)} issue(s) from tester feedback"
-                report.log_fix_applied(fixed, fix_description)
-                
-                print(f"  Status:  ✓ Fixes applied successfully", flush=True)
-                print(f"  Details: {fix_description}", flush=True)
-                
-                code = fixed  # Use fixed code for saving
-            except Exception as e:
-                print(f"  Status:  ✗ Fixing FAILED - {str(e)}", flush=True)
-                print(f"  Fallback: Using original generated code", flush=True)
-        else:
-            print(f"\n[PHASE 3/3] No fixes needed - code quality is good ✓", flush=True)
+        try:
+            code = fixer_agent.execute_module(code, feedback, module_info, report)
+        except Exception as e:
+            print(f"  Status:  Fixing FAILED - {str(e)}", flush=True)
+            print("  Fallback: Using original generated code", flush=True)
 
-        # ========== SAVING FILES ==========
         print(f"\n[PHASE 4/4] SAVING FILES", flush=True)
         print(f"  Output:  {output_dir.absolute()}", flush=True)
-        
-        print(f"  Files to save:", flush=True)
-        for filename in module_info['files']:
+        print("  Files to save:", flush=True)
+        for filename in module_info["files"]:
             try:
                 content = extract_code(code, file_marker=filename)
                 save_file(output_dir, filename, content)
             except Exception as e:
-                print(f"      ✗ {filename} - FAILED: {str(e)}", flush=True)
+                print(f"      {filename} - FAILED: {str(e)}", flush=True)
 
-        # Print detailed test report
         report.print_report()
         all_reports.append(report)
 
-    # Save all reports to JSON
     save_detailed_reports(all_reports, output_dir / "test_reports.json")
 
     print("\n" + "=" * 70)
@@ -967,16 +844,16 @@ def run_post_generation_build():
         has_errors = len(manager.errors) > 0
         
         if not has_errors:
-            print(f"\n✅ BUILD SUCCESSFUL - No errors found!", flush=True)
+            print(f"\n[OK] BUILD SUCCESSFUL - No errors found!", flush=True)
             return True
         
-        print(f"\n⚠️  COMPILATION ISSUES DETECTED", flush=True)
+        print(f"\n[WARN] COMPILATION ISSUES DETECTED", flush=True)
         print(f"Errors: {len(manager.errors)}", flush=True)
         print(f"Warnings: {len(manager.warnings)}", flush=True)
         
         # Generate error report
         report_file = manager.generate_error_report()
-        print(f"\n📋 Error report: {report_file}", flush=True)
+        print(f"\n[REPORT] Error report: {report_file}", flush=True)
         
         # Try to auto-fix
         print("\n[STEP 2] AUTO-FIX", flush=True)
@@ -985,7 +862,7 @@ def run_post_generation_build():
         fixer = ErrorFixer()
         
         if not fixer.ai_provider:
-            print("\n⚠️  AI provider not available for auto-fixing", flush=True)
+            print("\n[WARN] AI provider not available for auto-fixing", flush=True)
             print("    - Set GOOGLE_API_KEY for Gemini")
             print("    - Or ensure Ollama is running")
             print(f"\n    Review error report: {report_file}", flush=True)
@@ -997,18 +874,18 @@ def run_post_generation_build():
         fix_success = fixer.fix_compilation_errors(max_iterations=3)
         
         if fix_success:
-            print(f"\n✅ ALL ERRORS FIXED!", flush=True)
+            print(f"\n[OK] ALL ERRORS FIXED!", flush=True)
             print(f"   Fixed {len(fixer.fixed_errors)} error(s)", flush=True)
             return True
         else:
-            print(f"\n⚠️  Some errors could not be auto-fixed", flush=True)
+            print(f"\n[WARN] Some errors could not be auto-fixed", flush=True)
             print(f"   Fixed: {len(fixer.fixed_errors)}")
             print(f"   Remaining: {len(fixer.compile_manager.errors)}")
             print(f"\n   Review and fix manually: {report_file}", flush=True)
             return False
     
     except Exception as e:
-        print(f"\n❌ ERROR during build/fix: {str(e)}", flush=True)
+        print(f"\n[ERROR] ERROR during build/fix: {str(e)}", flush=True)
         import traceback
         traceback.print_exc()
         return False
@@ -1049,19 +926,10 @@ def main():
             import fixer_agent
             import tester_agent
 
-            dev_provider = getattr(dev_agent, "DEV_AGENT_PROVIDER", "gemini")
-            if dev_provider == "ollama":
-                dev_label = f"dev_agent / Ollama:{dev_agent.OLLAMA_FALLBACK_MODEL}"
-            else:
-                dev_label = (
-                    f"dev_agent / Gemini:{dev_agent.GEMINI_MODEL} "
-                    f"(fallback Ollama:{dev_agent.OLLAMA_FALLBACK_MODEL})"
-                )
-
             agents = {
-                "dev": dev_label,
-                "test": f"tester_agent / Ollama:{tester_agent.MODEL}",
-                "fix": f"fixer_agent / Ollama:{fixer_agent.MODEL}",
+                "dev": dev_agent.label(),
+                "test": tester_agent.label(),
+                "fix": fixer_agent.label(),
             }
 
             # ========== CODE GENERATION PHASE ==========
@@ -1085,9 +953,9 @@ def main():
 
             print("\n" + "=" * 70, flush=True)
             if build_success:
-                print("✅ [COMPLETE] All generated code compiled successfully!")
+                print("[COMPLETE] All generated code compiled successfully!")
             else:
-                print("⚠️  [ATTENTION] Some build issues remain - review the error report above")
+                print("[ATTENTION] Some build issues remain - review the error report above")
             print("=" * 70)
         finally:
             sys.stdout = output.original_stdout

@@ -256,3 +256,57 @@ def run(code: str) -> dict:
             "llm_review_available": False,
         },
     }
+
+
+def label() -> str:
+    """Return a human-readable execution label for logs."""
+    return f"tester_agent / Ollama:{MODEL}"
+
+
+def execute_module(code: str, module_info: dict, report=None) -> dict:
+    """Validate generated code and own the tester-agent execution logs."""
+    module_name = module_info["name"]
+
+    print(f"\n[PHASE 2/3] TESTING & VALIDATION", flush=True)
+    print(f"  Agent:   {label()}", flush=True)
+    print(f"  Purpose: Validate code quality, syntax, symbols, and functionality", flush=True)
+    print(f"  Checks:  deterministic static checks + LLM checklist review", flush=True)
+    print(f"           - undefined #define/typedef-like symbols", flush=True)
+    print(f"           - placeholder/TODO text", flush=True)
+    print(f"           - dynamic memory usage", flush=True)
+    print(f"           - AUTOSAR/embedded C checklist", flush=True)
+    print(f"  Status:  Running tester_agent...", flush=True)
+
+    print(f"         [tester_agent] Loading module: {module_name}", flush=True)
+    feedback = run(code)
+    print(f"         [tester_agent] Finished module: {module_name}", flush=True)
+
+    if report is not None:
+        report.log_test_feedback(feedback)
+
+    if isinstance(feedback, dict):
+        summary = feedback.get("summary", {})
+        print(
+            f"  Static:  {summary.get('static_issue_count', 0)} deterministic issue(s)",
+            flush=True,
+        )
+        print(
+            f"  LLM:     review {'available' if summary.get('llm_review_available') else 'unavailable/parse failed'}",
+            flush=True,
+        )
+
+    errors_found = getattr(report, "errors_found", [])
+    if errors_found:
+        print(f"  Status:  Issues detected - {len(errors_found)} problem(s) found", flush=True)
+        print(f"\n  [ISSUES DETECTED]", flush=True)
+        for i, error in enumerate(errors_found[:5], 1):
+            severity = error["severity"]
+            content = error["content"][:70]
+            print(f"    {i}. [{severity:8s}] {content}", flush=True)
+        if len(errors_found) > 5:
+            print(f"    ... and {len(errors_found) - 5} more issues", flush=True)
+    else:
+        print(f"  Status:  All tests passed", flush=True)
+        print(f"  Details: No issues detected", flush=True)
+
+    return feedback

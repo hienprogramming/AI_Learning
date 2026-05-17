@@ -15,8 +15,10 @@ import ollama
 
 
 def load_local_env() -> None:
-    env_file = Path(__file__).resolve().parent / ".env"
-    if not env_file.exists():
+    agent_dir = Path(__file__).resolve().parent
+    candidate_files = [agent_dir / ".env", agent_dir.parent / ".env"]
+    env_file = next((path for path in candidate_files if path.exists()), None)
+    if env_file is None:
         return
 
     for line in env_file.read_text(encoding="utf-8").splitlines():
@@ -93,3 +95,34 @@ def run(requirement: str) -> str:
             f"Falling back to Ollama model {OLLAMA_FALLBACK_MODEL}."
         )
         return run_with_ollama(requirement)
+
+
+def label() -> str:
+    """Return a human-readable execution label for logs."""
+    if DEV_AGENT_PROVIDER == "ollama":
+        return f"dev_agent / Ollama:{OLLAMA_FALLBACK_MODEL}"
+
+    return (
+        f"dev_agent / Gemini:{GEMINI_MODEL} "
+        f"(fallback Ollama:{OLLAMA_FALLBACK_MODEL})"
+    )
+
+
+def execute_module(project_context: str, module_info: dict, report=None) -> str:
+    """Generate code for one module and own the dev-agent execution logs."""
+    module_name = module_info["name"]
+
+    print(f"\n[PHASE 1/3] CODE GENERATION", flush=True)
+    print(f"  Agent:   {label()}", flush=True)
+    print(f"  Status:  Running dev_agent...", flush=True)
+
+    print(f"         [dev_agent] Loading module: {module_name}", flush=True)
+    code = run(project_context + module_info["req"])
+    print(f"         [dev_agent] Finished module: {module_name}", flush=True)
+
+    if report is not None:
+        report.log_code_generation(code)
+
+    print(f"  Status:  Code generated successfully", flush=True)
+    print(f"  Details: {code.count(chr(10))} lines, ~{len(code)} bytes", flush=True)
+    return code
